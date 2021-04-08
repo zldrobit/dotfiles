@@ -17,4 +17,7 @@ inoremap <C-U> <C-G>u<C-U>
 " Trim trailing white spaces
 nnoremap <Leader>ts :%s/\s\+$//ge<CR>
 
+" Quickfix buffer list
+nnoremap <silent> <Leader>ls :call setqflist(getbufinfo({'buflisted':1})) \| copen<CR>
+
 " TODO: open on last edited position
