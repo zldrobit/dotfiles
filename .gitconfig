@@ -1,1 +1,22 @@
-/home/fjc/.gitconfig
+[user]
+	email = zldrobit@126.com
+	name = Jiacong Fang
+[http]
+	proxy = socks5h://IP:PORT
+[https]
+	proxy = socks5h://IP:PORT
+[core]
+	editor = vim
+[merge]
+	tool = vimdiff
+[diff]
+	tool = vimdiff
+[difftool]
+	prompt = false
+[alias]
+	br = branch -vv
+	st = status -uno
+	ch = checkout
+	re = remote -v
+	co = config --global -e
+	lo = log --oneline
