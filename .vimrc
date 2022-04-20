@@ -48,6 +48,11 @@ cnoreabbrev <expr> vsb (getcmdtype() == ':' && getcmdline() =~ '^vsb$')? 'vert s
 "   \ 's/' . expand('<cword>') . '/<Left>' : 'rep'
 command -nargs=1 Replace exe 'normal! ma:%s/' . expand('<cword>') . '/' . <q-args> . '/g<CR>`a'
 
+" Anonymous IP
+command -nargs=0 AnonyIP exe "normal!" .
+  \ ':%s/\(\%([0-9]\{1,3}\.\)\{3}[0-9]\{1,3}\)\(:[0-9]\+\)\=/\="IP" .' .
+  \ '(empty(submatch(2)) ? "" : ":PORT")/g<CR>"'
+
 " Indentation
 function Indent(nspace = 4)
   let &ts=a:nspace
