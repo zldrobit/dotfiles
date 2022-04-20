@@ -2,6 +2,7 @@ set nocompatible
 set backspace=indent,eol,start
 set ruler
 set showcmd
+set wildmode=longest:full,full
 set wildmenu
 set display=truncate
 set scrolloff=5
@@ -22,7 +23,7 @@ nnoremap <Leader>ts :%s/\s\+$//ge<CR>
 nnoremap <silent> <Leader>ls :call setqflist(getbufinfo({'buflisted':1})) \| copen<CR>
 
 " Show current git branch (for current working directory)
-nnoremap <Leader>br :echom system('bash -ic __git_ps1')<CR>
+nnoremap <Leader>br :echo system('bash -ic __git_ps1')<CR>
 
 " Map F3 F4 for :cnext :cprev
 if $TERM == "cygwin"
@@ -32,21 +33,29 @@ endif
 nnoremap <F3> :cnext<CR>
 nnoremap <F4> :cprev<CR>
 
+" Edit vimrc
+
+nnoremap <Leader>rc :vs ~/.vimrc<CR>
+
 " Vertical terminal
 cnoreabbrev <expr> vterm (getcmdtype() == ':' && getcmdline() =~ '^vterm$')? 'vert term' : 'vterm'
 
 " Vertical split buffer
 cnoreabbrev <expr> vsb (getcmdtype() == ':' && getcmdline() =~ '^vsb$')? 'vert sb' : 'vsb'
 
-" Tab as space intent
-" function! IndentWithSpaces(spaces)
-"   let &l:tabstop=a:spaces
-"   let &l:softtabstop=a:spaces
-"   let &l:shiftwidth=a:spaces
-"   let &l:expandtab=1
-" endfunction
+" Replace 
+" cnoreabbrev <expr> rep (getcmdtype() == ':' && getcmdline() =~ '^rep$')? 
+"   \ 's/' . expand('<cword>') . '/<Left>' : 'rep'
+command -nargs=1 Replace exe 'normal! ma:%s/' . expand('<cword>') . '/' . <q-args> . '/g<CR>`a'
 
-command -nargs=1 IndentWithSpaces set ts=<args> sts=<args> sw=<args> expandtab
+" Indentation
+function Indent(nspace = 4)
+  let &ts=a:nspace
+  let &sts=a:nspace
+  let &sw=a:nspace
+  set expandtab
+endfunction
+command -nargs=? IndentWithSpaces call Indent(<args>)
 command -nargs=0 ShowIndent set ts? sts? sw? expandtab?
 
 " set termwinkey=<C-X>
@@ -57,6 +66,26 @@ nnoremap <Leader>lo :diffget<Space>LOCAL<CR>
 nnoremap <Leader>re :diffget<Space>REMOTE<CR>
 
 " Backspace for last inserted location
-nnoremap <backspace> g;
+nnoremap <backspace> `.
 
 " TODO: open on last edited position
+
+" vim-fugitive status line
+set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
+
+" Preview for quickfix
+augroup PreviewQuickfix
+  au!
+  au FileType qf nnoremap <buffer> m <CR><C-W>p
+  " TODO: May be polluted in using Git
+  " au FileType fugitive nnoremap <buffer> m <CR><C-W>p
+augroup END
+
+" Using bash completion for Gclog
+
+" function GclogCompletion(ArgLead, CmdLine, CursorPos)
+"     let l:words = split(a:CmdLine)
+"     let l:words[0] = 'git log'
+"     let l:command = join(l:words)
+"     return bash#complete(l:command)
+" endfunction
