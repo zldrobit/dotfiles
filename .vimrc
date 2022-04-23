@@ -34,7 +34,6 @@ nnoremap <F3> :cnext<CR>
 nnoremap <F4> :cprev<CR>
 
 " Edit vimrc
-
 nnoremap <Leader>rc :vs ~/.vimrc<CR>
 
 " Vertical terminal
@@ -82,7 +81,16 @@ nnoremap <backspace> `.
 " TODO: open on last edited position
 
 " vim-fugitive status line
-set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
+function s:scriptexists(script)
+  silent let scriptlist = systemlist('find ~/.vim -name '. a:script)
+  if len(scriptlist) > 0
+    return 1
+  endif
+endfunction
+if s:scriptexists('vim-fugitive')
+  set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
+  set laststatus=2
+endif
 
 " Preview for quickfix
 augroup PreviewQuickfix
