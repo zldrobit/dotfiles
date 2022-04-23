@@ -46,7 +46,13 @@ cnoreabbrev <expr> vsb (getcmdtype() == ':' && getcmdline() =~ '^vsb$')? 'vert s
 " Replace 
 " cnoreabbrev <expr> rep (getcmdtype() == ':' && getcmdline() =~ '^rep$')? 
 "   \ 's/' . expand('<cword>') . '/<Left>' : 'rep'
-command -nargs=1 Replace exe 'normal! ma:%s/' . expand('<cword>') . '/' . <q-args> . '/g<CR>`a'
+" command -nargs=1 Replace exe 'normal! ma:%s/' . expand('<cword>') . '/' . <q-args> . '/g<CR>`a'
+function s:Replace(pat, sub, ...) range
+  exe a:firstline . ',' . a:lastline . 's/' . a:pat. '/' . a:sub . '/g' . (exists("a:1") ? 'c' : '')
+endfunction
+command -nargs=* -range=% Replace <line1>,<line2>call s:Replace(<f-args>)
+nnoremap <Leader>re :Replace <C-R><C-W> 
+vnoremap <Leader>re :Replace <C-R><C-W> 
 
 " Anonymous IP
 command -nargs=0 AnonyIP exe "normal!" .
@@ -54,21 +60,21 @@ command -nargs=0 AnonyIP exe "normal!" .
   \ '(empty(submatch(2)) ? "" : ":PORT")/g<CR>"'
 
 " Indentation
-function Indent(nspace = 4)
+function s:Indent(nspace = 4)
   let &ts=a:nspace
   let &sts=a:nspace
   let &sw=a:nspace
   set expandtab
 endfunction
-command -nargs=? IndentWithSpaces call Indent(<args>)
+command -nargs=? IndentWithSpaces call s:Indent(<args>)
 command -nargs=0 ShowIndent set ts? sts? sw? expandtab?
 
 " set termwinkey=<C-X>
 set grepprg=grep\ -n\ --color=always
 
 " Difftool and mergetool keymap
-nnoremap <Leader>lo :diffget<Space>LOCAL<CR>
-nnoremap <Leader>re :diffget<Space>REMOTE<CR>
+" nnoremap <Leader>lo :diffget<Space>LOCAL<CR>
+" nnoremap <Leader>re :diffget<Space>REMOTE<CR>
 
 " Backspace for last inserted location
 nnoremap <backspace> `.
