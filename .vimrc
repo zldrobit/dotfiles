@@ -28,6 +28,9 @@ nnoremap <silent> <Leader>ls :call setqflist(getbufinfo({'buflisted':1})) \| cop
 " Show current git branch (for current working directory)
 nnoremap <Leader>br :echo system('bash -ic __git_ps1')<CR>
 
+" C-L to clear search
+nnoremap <C-L> :let @/=''<CR><C-L>
+
 " Map F3 F4 for :cnext :cprev
 if $TERM == "cygwin"
   set <F3>=[[C
