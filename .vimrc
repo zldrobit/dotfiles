@@ -19,6 +19,9 @@ inoremap <C-U> <C-G>u<C-U>
 " Trim trailing white spaces
 nnoremap <Leader>ts :%s/\s\+$//ge<CR>
 
+" Delete continuous spaces
+nnoremap ds gEldW
+
 " Quickfix buffer list
 nnoremap <silent> <Leader>ls :call setqflist(getbufinfo({'buflisted':1})) \| copen<CR>
 
@@ -59,7 +62,12 @@ command -nargs=0 AnonyIP exe "normal!" .
   \ '(empty(submatch(2)) ? "" : ":PORT")/g<CR>"'
 
 " Indentation
-function s:Indent(nspace = 4)
+function s:Indent(...)
+  if a:0 == 0
+    nspace = 4
+  elseif
+    nspace = a:1
+  endif
   let &ts=a:nspace
   let &sts=a:nspace
   let &sw=a:nspace
