@@ -10,6 +10,7 @@ set incsearch
 set nomodeline
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set hls
+" set mouse=n
 
 syntax on
 filetype plugin indent on
@@ -42,6 +43,9 @@ nnoremap <F4> :cprev<CR>
 " Edit vimrc
 nnoremap <Leader>rc :vs ~/.vimrc<CR>
 
+" Switch cursor status
+nnoremap <Leader>cu :set cursorline! cursorcolumn!<CR>
+
 " Vertical terminal
 cnoreabbrev <expr> vterm (getcmdtype() == ':' && getcmdline() =~ '^vterm$')? 'vert term' : 'vterm'
 
@@ -67,13 +71,13 @@ command -nargs=0 AnonyIP exe "normal!" .
 " Indentation
 function s:Indent(...)
   if a:0 == 0
-    nspace = 4
-  elseif
-    nspace = a:1
+    let nspace = 4
+  else
+    let nspace = a:1
   endif
-  let &ts=a:nspace
-  let &sts=a:nspace
-  let &sw=a:nspace
+  let &ts=nspace
+  let &sts=nspace
+  let &sw=nspace
   set expandtab
 endfunction
 command -nargs=? IndentWithSpaces call s:Indent(<args>)
