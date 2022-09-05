@@ -20,3 +20,6 @@
 	re = remote -v
 	co = config --global -e
 	lo = log --oneline
+	sst = submodule status
+[credential "https://github.com"]
+	helper = !/usr/bin/gh auth git-credential
