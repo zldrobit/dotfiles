@@ -10,6 +10,7 @@ set incsearch
 set nomodeline
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set hls
+set bg=dark
 " set mouse=n
 
 syntax on
