@@ -1,0 +1,23 @@
+name: train
+root: ~/
+
+windows:
+  - docker: /bin/bash
+  - vim: /bin/bash
+  - nvsmi/nmon:
+      layout: 6d92,165x39,0,0{82x39,0,0,20,82x39,83,0,23}
+      # Synchronize all panes of this window, can be enabled before or after the pane commands run.
+      # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
+      # synchronize: after
+      panes:
+        - pane1:
+            - watch -n .5 nvidia-smi
+        - pane2:
+            
+  - nvtop: nvtop
+  - top: top
+  - bash: 
+
+  - setup:
+      - tmux send-keys -t train:nvsmi/nmon.1 "nmon" C-m c
+      - exit
