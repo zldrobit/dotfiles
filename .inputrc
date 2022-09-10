@@ -1,3 +1,4 @@
 # set show-mode-in-prompt on
-"\C-f": shell-forward-word
-"\C-b": shell-backward-word
+
+"\C-f": vi-fword
+"\C-b": vi-bword
