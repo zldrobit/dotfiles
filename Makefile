@@ -15,11 +15,9 @@ pre-git:
 post-git:
 	IP=$$(sed -n -E 's/^.*[^0-9](([0-9]{1,3}\.){3}[0-9]{1,3}).*$$/\1/p' .gitconfig.bak | uniq)
 	PORT=$$(sed -n -E 's/^.*[^0-9](([0-9]{1,3}\.){3}[0-9]{1,3}):([0-9]+).*$$/\3/p' .gitconfig.bak | uniq)
-	[ -z "$$IP" ] && echo "no IP" && exit
-	[ -z "$$PORT" ] && echo "no PORT" && exit
-	printf "$${IP}:$$PORT\n"
-	sed -i.noip -E "s/IP/$$IP/g" .gitconfig
-	sed -i.noip -E "s/PORT/$$PORT/g" .gitconfig
+	printf "IP:PORT=$${IP}:$$PORT\n"
+	[ -z "$$IP" -o  -z "$$PORT" ] && { echo "no IP or PORT" && exit 1; }
+	sed -i -E -e "s/IP/$$IP/g" -e "s/PORT/$$PORT/g" .gitconfig
 
 $(targets): $(HOME)/%: %
 	ln -sf `realpath $<` $@
@@ -32,7 +30,6 @@ $(tgtdirs):
 install: $(targets)
 
 clean:
-	# echo $(targets) $(tgtdirs)
 	rm -rf $(targets) $(tgtdirs)
 
 .PHONY: all pre-git post-git install clean
