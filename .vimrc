@@ -91,8 +91,9 @@ set grepprg=grep\ -n\ --color=always
 " nnoremap <Leader>lo :diffget<Space>LOCAL<CR>
 " nnoremap <Leader>re :diffget<Space>REMOTE<CR>
 
-" Backspace for last inserted location
-nnoremap <backspace> `.
+" (Shift) Backspace for last inserted location
+nnoremap <backspace> g;
+nnoremap [8;2~ g,
 
 " TODO: open on last edited position
 
