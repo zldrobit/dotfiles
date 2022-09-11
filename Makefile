@@ -1,5 +1,5 @@
 # GNU Make version >= 3.82
-configs := .gitconfig .vimrc .tmux.conf $(wildcard .tmuxinator/*)
+configs := .gitconfig .vimrc .tmux.conf .inputrc $(wildcard .tmuxinator/*)
 targets := $(addprefix $(HOME)/,$(configs))
 dirs := .tmuxinator
 tgtdirs := $(addprefix $(HOME)/,$(dirs))
