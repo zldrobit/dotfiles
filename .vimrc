@@ -74,12 +74,12 @@ function s:Indent(...)
   if a:0 == 0
     set ts? sts? sw? expandtab?
   else
-    let nspace = a:1
+    let l:nspace = a:1
+    let &ts=l:nspace
+    let &sts=l:nspace
+    let &sw=l:nspace
+    set expandtab
   endif
-  let &ts=nspace
-  let &sts=nspace
-  let &sw=nspace
-  set expandtab
 endfunction
 command -nargs=? IndentWithSpaces call s:Indent(<args>)
 
