@@ -72,7 +72,7 @@ command -nargs=0 AnonyIP exe "normal!" .
 " Indentation
 function s:Indent(...)
   if a:0 == 0
-    let nspace = 4
+    set ts? sts? sw? expandtab?
   else
     let nspace = a:1
   endif
@@ -82,7 +82,21 @@ function s:Indent(...)
   set expandtab
 endfunction
 command -nargs=? IndentWithSpaces call s:Indent(<args>)
-command -nargs=0 ShowIndent set ts? sts? sw? expandtab?
+
+" Search in buffers
+function s:BufSearch(pat)
+  cex [] | silent! bufdo vimgrepadd /a:pat/ % | copen
+endfunction
+command -nargs=1 BufSearch call s:BufSearch(<args>)
+nnoremap <Leader>bs :BufSearch <C-R><C-W>
+vnoremap <Leader>bs :BufSearch <C-R><C-W>
+
+" Remove all but the current buffer
+function s:OnlyBuffer()
+  %bd | e#
+endfunction
+command -nargs=0 OnlyBuffer call s:OnlyBuffer()
+nnoremap <Leader>on :OnlyBuffer<CR>
 
 " set termwinkey=<C-X>
 set grepprg=grep\ -n\ --color=always
