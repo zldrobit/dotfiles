@@ -1,4 +1,4 @@
-# GNU Make version >= 3.82 ?
+# GNU Make version >= 3.82
 configs := .gitconfig .vimrc .tmux.conf $(wildcard .tmuxinator/*)
 targets := $(addprefix $(HOME)/,$(configs))
 dirs := .tmuxinator
