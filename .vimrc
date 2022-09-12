@@ -19,7 +19,7 @@ filetype plugin indent on
 inoremap <C-U> <C-G>u<C-U>
 
 " Trim trailing white spaces
-nnoremap <Leader>ts :%s/\s\+$//ge<CR>
+nnoremap <silent> <Leader>ts :let tmp=@/<CR>:%s/\s\+$//ge<CR>:let @/=tmp<CR>
 
 " Delete continuous spaces
 nnoremap ds gEldW
