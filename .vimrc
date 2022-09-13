@@ -42,7 +42,7 @@ nnoremap <F3> :cnext<CR>
 nnoremap <F4> :cprev<CR>
 
 " Edit vimrc
-nnoremap <Leader>rc :vs ~/.vimrc<CR>
+nnoremap <Leader>rc :vs $MYVIMRC<CR>
 
 " Switch cursor status
 nnoremap <Leader>cu :set cursorline! cursorcolumn!<CR>
