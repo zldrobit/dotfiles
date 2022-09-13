@@ -85,11 +85,20 @@ command -nargs=? IndentWithSpaces call s:Indent(<args>)
 
 " Search in buffers
 function s:BufSearch(pat)
-  cex [] | silent! bufdo vimgrepadd /a:pat/ % | copen
+  exe 'cex [] | silent! bufdo vimgrepadd /' . a:pat . '/ % | cw'
 endfunction
-command -nargs=1 BufSearch call s:BufSearch(<args>)
+command -nargs=1 BufSearch call s:BufSearch(<q-args>)
 nnoremap <Leader>bs :BufSearch <C-R><C-W>
 vnoremap <Leader>bs :BufSearch <C-R><C-W>
+
+" Search in git ls-files
+function s:GitSearch(pat)
+  " Prepend noautocmd for fast grep
+  exe 'vimgrep ' . a:pat . ' `git ls-files` | cw'
+endfunction
+command -nargs=1 GitSearch call s:GitSearch(<q-args>)
+nnoremap <Leader>gs :GitSearch <C-R><C-W>
+vnoremap <Leader>gs :GitSearch <C-R><C-W>
 
 " Remove all but the current buffer
 function s:OnlyBuffer()
