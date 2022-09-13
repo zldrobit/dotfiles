@@ -35,7 +35,7 @@ nnoremap <Leader>br :echo system('bash -ic __git_ps1')<CR>
 nnoremap <C-L> :let @/=''<CR><C-L>
 
 " Map F3 F4 for :cnext :cprev
-if $TERM == "cygwin"
+if $TERM ==? "cygwin"
   set <F3>=[[C
   set <F4>=[[D
 endif
