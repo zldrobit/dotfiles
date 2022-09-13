@@ -29,7 +29,11 @@ $(tgtdirs):
 
 install: $(targets)
 
+push:
+	git push
+	git push utapp
+
 clean:
 	rm -rf $(targets) $(tgtdirs)
 
-.PHONY: all pre-git post-git install clean
+.PHONY: all pre-git post-git install push clean
