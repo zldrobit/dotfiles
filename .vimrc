@@ -10,6 +10,7 @@ set incsearch
 set nomodeline
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set hls
+set shiftround
 set bg=dark
 " set mouse=n
 
@@ -67,7 +68,7 @@ vnoremap <Leader>re :Replace <C-R><C-W>
 " Anonymous IP
 command -nargs=0 AnonyIP exe "normal!" .
   \ ':%s/\(\%([0-9]\{1,3}\.\)\{3}[0-9]\{1,3}\)\(:[0-9]\+\)\=/\="IP" .' .
-  \ '(empty(submatch(2)) ? "" : ":PORT")/g<CR>"'
+  \ '(empty(submatch(2)) ? "" : ":PORT")/g<CR>'
 
 " Indentation
 function s:Indent(...)
