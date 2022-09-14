@@ -24,7 +24,7 @@ inoremap <C-U> <C-G>u<C-U>
 nnoremap <silent> <Leader>ts :let tmp=@/<CR>:%s/\s\+$//ge<CR>:let @/=tmp<CR>
 
 " Delete continuous spaces
-nnoremap ds gEldW
+nnoremap ds lgEldW
 
 " Quickfix buffer list
 nnoremap <silent> <Leader>ls :call setqflist(getbufinfo({'buflisted':1})) \| copen<CR>
@@ -87,20 +87,23 @@ command -nargs=? IndentWithSpaces call s:Indent(<args>)
 
 " Search in buffers
 function s:BufSearch(pat)
-  exe 'cex [] | silent! bufdo vimgrepadd! /' . a:pat . '/ % | cw'
+  let l:bufnr = bufnr('%')
+  exe 'cex [] | silent! bufdo vimgrepadd /' . a:pat . '/j %'
+  exe 'buffer ' . l:bufnr
+  cw
 endfunction
 command -nargs=1 BufSearch call s:BufSearch(<q-args>)
-nnoremap <Leader>bs :BufSearch <C-R><C-W>
-vnoremap <Leader>bs :BufSearch <C-R><C-W>
+nnoremap <silent><Leader>bs :BufSearch <C-R><C-W><CR>
+vnoremap <silent><Leader>bs :<C-U>BufSearch <C-R><C-W><CR>
 
 " Search in git ls-files
 function s:GitSearch(pat)
   " Prepend noautocmd for fast grep
-  exe 'vimgrep ' . a:pat . ' `git ls-files` | cw'
+  exe 'cex[] | vimgrep /' . a:pat . '/j `git ls-files` | cw'
 endfunction
 command -nargs=1 GitSearch call s:GitSearch(<q-args>)
-nnoremap <Leader>gs :GitSearch <C-R><C-W>
-vnoremap <Leader>gs :GitSearch <C-R><C-W>
+nnoremap <Leader>gs :GitSearch <C-R><C-W><CR>
+vnoremap <Leader>gs :<C-U>GitSearch <C-R><C-W><CR>
 
 " Remove all but the current buffer
 function s:OnlyBuffer()
