@@ -33,7 +33,7 @@ nnoremap <silent> <Leader>ls :call setqflist(getbufinfo({'buflisted':1})) \| cop
 nnoremap <Leader>br :echo system('bash -ic __git_ps1')<CR>
 
 " C-L to clear search
-nnoremap <C-L> :let @/=''<CR><C-L>
+nnoremap <C-L> :nohlsearch<CR><C-L>
 
 " Map F3 F4 for :cnext :cprev
 if $TERM ==? "cygwin"
@@ -87,7 +87,7 @@ command -nargs=? IndentWithSpaces call s:Indent(<args>)
 
 " Search in buffers
 function s:BufSearch(pat)
-  exe 'cex [] | silent! bufdo vimgrepadd /' . a:pat . '/ % | cw'
+  exe 'cex [] | silent! bufdo vimgrepadd! /' . a:pat . '/ % | cw'
 endfunction
 command -nargs=1 BufSearch call s:BufSearch(<q-args>)
 nnoremap <Leader>bs :BufSearch <C-R><C-W>
