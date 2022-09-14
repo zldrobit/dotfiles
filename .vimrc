@@ -6,10 +6,10 @@ set wildmode=longest:full,full
 set wildmenu
 set display=truncate
 set scrolloff=5
+set hlsearch
 set incsearch
 set nomodeline
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
-set hls
 set shiftround
 set bg=dark
 " set mouse=n
@@ -17,6 +17,7 @@ set bg=dark
 syntax on
 filetype plugin indent on
 
+inoremap <C-H> <C-G>u<C-H>
 inoremap <C-U> <C-G>u<C-U>
 
 " Trim trailing white spaces
