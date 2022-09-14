@@ -11,8 +11,22 @@ set incsearch
 set nomodeline
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set shiftround
+set pastetoggle=<Leader>pa
 set bg=dark
 " set mouse=n
+
+" vim-fugitive status line
+function s:scriptexists(script)
+  silent let scriptlist = systemlist('find ~/.vim -name '. a:script)
+  if len(scriptlist) > 0
+    return 1
+  endif
+endfunction
+let s:fugitive = s:scriptexists('vim-fugitive')
+set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=
+set statusline+=%#Todo#%.{&paste==1?'[PASTE]':''}%*\ \ 
+set statusline+=%-14.(%l,%c%V%)\ %P
+set laststatus=2
 
 syntax on
 filetype plugin indent on
@@ -124,18 +138,6 @@ nnoremap <backspace> g;
 nnoremap [8;2~ g,
 
 " TODO: open on last edited position
-
-" vim-fugitive status line
-function s:scriptexists(script)
-  silent let scriptlist = systemlist('find ~/.vim -name '. a:script)
-  if len(scriptlist) > 0
-    return 1
-  endif
-endfunction
-if s:scriptexists('vim-fugitive')
-  set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
-  set laststatus=2
-endif
 
 " Preview for quickfix
 augroup PreviewQuickfix
