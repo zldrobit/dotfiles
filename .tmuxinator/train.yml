@@ -5,7 +5,7 @@ windows:
   - docker: /bin/bash
   - vim: /bin/bash
   - nvsmi/nmon:
-      layout: 6d92,165x39,0,0{82x39,0,0,20,82x39,83,0,23}
+      # layout: 2e32,254x64,0,0{126x64,0,0[126x50,0,0,41,126x13,0,51,46],127x64,127,0,47}
       # Synchronize all panes of this window, can be enabled before or after the pane commands run.
       # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
       # synchronize: after
@@ -13,11 +13,14 @@ windows:
         - pane1:
             - watch -n .5 nvidia-smi
         - pane2:
+            - nvidia-smi -L
+        - pane3:
             
   - nvtop: nvtop
   - top: top
   - bash: 
 
   - setup:
-      - tmux send-keys -t train:nvsmi/nmon.1 "nmon" C-m c
+      - tmux send-keys -t train:nvsmi/nmon.2 "nmon" C-m c
+      - tmux select-layout -t train:2 2e32,254x64,0,0\{126x64,0,0\[126x50,0,0,41,126x13,0,51,46\],127x64,127,0,47\} && clear
       - exit

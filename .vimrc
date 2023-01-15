@@ -63,6 +63,13 @@ nnoremap <Leader>rc :vs $MYVIMRC<CR>
 " Switch cursor status
 nnoremap <Leader>cu :set cursorline! cursorcolumn!<CR>
 
+" Switch between h/hpp and c/cpp files
+nnoremap <silent><Leader>ch :silent exe "e " . substitute(expand('%'), '\.\([ch]\)\(pp\)$', 
+    \ '\= "." . (submatch(1) == "c" ? "h" : "c") . submatch(2)', "")<CR>`"
+
+" Change dir to current file
+nnoremap <silent><Leader>cd :chdir %:p:h<CR>
+
 " Vertical terminal
 cnoreabbrev <expr> vterm (getcmdtype() == ':' && getcmdline() =~ '^vterm$')? 'vert term' : 'vterm'
 
@@ -146,6 +153,19 @@ augroup PreviewQuickfix
   " TODO: May be polluted in using Git
   " au FileType fugitive nnoremap <buffer> m <CR><C-W>p
 augroup END
+
+" Toggle vim-fugitive's Git status window
+function! s:ToggleGstatus() abort
+  for l:winnr in range(1, winnr('$'))
+    if !empty(getwinvar(l:winnr, 'fugitive_status'))
+      execute l:winnr.'close'
+      return
+    endif
+  endfor
+  Git
+endfunction
+
+nnoremap <silent> <Leader>gg :call <SID>ToggleGstatus()<CR>
 
 " Using bash completion for Gclog
 
