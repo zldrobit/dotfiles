@@ -17,15 +17,18 @@ set bg=dark
 
 " vim-fugitive status line
 function s:scriptexists(script)
-  silent let scriptlist = systemlist('find ~/.vim -name '. a:script)
+  silent let scriptlist = systemlist('find ~/.vim/pack -name '. a:script)
   if len(scriptlist) > 0
     return 1
   endif
 endfunction
 let s:fugitive = s:scriptexists('vim-fugitive')
-set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=
-set statusline+=%#Todo#%.{&paste==1?'[PASTE]':''}%*\ \ 
-set statusline+=%-14.(%l,%c%V%)\ %P
+set statusline=%<%f\ %h%m%r
+if s:fugitive == 1
+  set statusline+=%{FugitiveStatusline()}
+endif
+set statusline+=%=%#Todo#%.{&paste==1?'[PASTE]':''}%*
+set statusline+=\ \ %-14.(%l,%c%V%)\ %P
 set laststatus=2
 
 syntax on
@@ -166,6 +169,9 @@ function! s:ToggleGstatus() abort
 endfunction
 
 nnoremap <silent> <Leader>gg :call <SID>ToggleGstatus()<CR>
+
+" DVC
+autocmd! BufNewFile,BufRead Dvcfile,*.dvc,dvc.lock setfiletype yaml
 
 " Using bash completion for Gclog
 
