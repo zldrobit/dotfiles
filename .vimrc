@@ -170,6 +170,14 @@ endfunction
 
 nnoremap <silent> <Leader>gg :call <SID>ToggleGstatus()<CR>
 
+" Show only vim-fugitive
+function! s:GitOnly() abort
+  Git
+  wincmd o 
+endfunction
+
+nnoremap <silent> <Leader>GG :call <SID>GitOnly()<CR>
+
 " DVC
 autocmd! BufNewFile,BufRead Dvcfile,*.dvc,dvc.lock setfiletype yaml
 
