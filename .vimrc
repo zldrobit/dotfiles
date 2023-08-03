@@ -189,3 +189,10 @@ autocmd! BufNewFile,BufRead Dvcfile,*.dvc,dvc.lock setfiletype yaml
 "     let l:command = join(l:words)
 "     return bash#complete(l:command)
 " endfunction
+
+" Plugins
+call plug#begin()
+Plug 'tpope/vim-fugitive', { 'tag': 'v3.7'}
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'pechorin/any-jump.vim'
+call plug#end()
