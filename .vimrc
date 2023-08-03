@@ -17,7 +17,7 @@ set bg=dark
 
 " vim-fugitive status line
 function s:scriptexists(script)
-  silent let scriptlist = systemlist('find ~/.vim/pack -name '. a:script)
+  silent let scriptlist = systemlist('find ~/.vim -name '. a:script)
   if len(scriptlist) > 0
     return 1
   endif
@@ -181,6 +181,13 @@ nnoremap <silent> <Leader>GG :call <SID>GitOnly()<CR>
 " DVC
 autocmd! BufNewFile,BufRead Dvcfile,*.dvc,dvc.lock setfiletype yaml
 
+" Declaration for vim-lsc
+let g:lsc_server_commands = { 'python' : 'pyright-langserver --stdio'}
+let g:lsc_auto_map = v:true
+let g:lsc_enable_autocomplete = v:false
+let g:lsc_enable_diagnostics = v:false
+let g:lsc_enable_highlights = v:false
+
 " Using bash completion for Gclog
 
 " function GclogCompletion(ArgLead, CmdLine, CursorPos)
@@ -191,8 +198,12 @@ autocmd! BufNewFile,BufRead Dvcfile,*.dvc,dvc.lock setfiletype yaml
 " endfunction
 
 " Plugins
-call plug#begin()
-Plug 'tpope/vim-fugitive', { 'tag': 'v3.7'}
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'pechorin/any-jump.vim'
-call plug#end()
+let s:vim_plug = s:scriptexists('plug.vim')
+if s:vim_plug == 1
+  call plug#begin()
+  Plug 'tpope/vim-fugitive', { 'tag': 'v3.7'}
+  Plug 'ctrlpvim/ctrlp.vim'
+  Plug 'pechorin/any-jump.vim'
+  Plug 'natebosch/vim-lsc'
+  call plug#end()
+endif
