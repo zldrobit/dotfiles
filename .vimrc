@@ -38,7 +38,7 @@ inoremap <C-H> <C-G>u<C-H>
 inoremap <C-U> <C-G>u<C-U>
 
 " Trim trailing white spaces
-nnoremap <silent> <Leader>ts :let tmp=@/<CR>:%s/\s\+$//ge<CR>:let @/=tmp<CR>
+nnoremap <silent> <Leader>ts ma:let tmp=@/<CR>:%s/\s\+$//ge<CR>`a:let @/=tmp<CR>
 
 " Delete continuous spaces
 " nnoremap ds lgEldW
