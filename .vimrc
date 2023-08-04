@@ -182,6 +182,11 @@ endfunction
 
 nnoremap <silent> <Leader>GG :call <SID>GitOnly()<CR>
 
+autocmd! FileType fugitive nmap <silent> dV dv:call <SID>ToggleGstatus()<CR>
+
+" Python
+autocmd! FileType python setlocal ts=8 sts=4 sw=4 expandtab
+
 " DVC
 autocmd! BufNewFile,BufRead Dvcfile,*.dvc,dvc.lock setfiletype yaml
 
