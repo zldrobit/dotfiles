@@ -71,7 +71,7 @@ nnoremap <Leader>rc :Vimrc<CR>
 nnoremap <Leader>cu :set cursorline! cursorcolumn!<CR>
 
 " Switch between h/hpp and c/cpp files
-nnoremap <silent><Leader>ch :silent exe "e " . substitute(expand('%'), '\.\([ch]\)\(pp\)$', 
+nnoremap <silent><Leader>ch :silent exe "e " . substitute(expand('%'), '\.\([ch]\)\(pp\)$',
     \ '\= "." . (submatch(1) == "c" ? "h" : "c") . submatch(2)', "")<CR>`"
 
 " Change dir to current file
@@ -80,6 +80,11 @@ nnoremap <silent><Leader>cd :chdir %:p:h<CR>
 " Readline style insert
 inoremap <C-a>  <C-o>^
 inoremap <C-e>  <C-o>$
+inoremap <C-b>  <C-o>B
+inoremap <C-f>  <C-o>W
+execute "set <M-\\>=\e\\"
+nnoremap <M-\>  lgEldW
+inoremap <M-\>  <C-c>llgEldWi
 
 " Vertical terminal
 cnoreabbrev <expr> vterm (getcmdtype() == ':' && getcmdline() =~ '^vterm$')? 'vert term' : 'vterm'
@@ -87,16 +92,16 @@ cnoreabbrev <expr> vterm (getcmdtype() == ':' && getcmdline() =~ '^vterm$')? 've
 " Vertical split buffer
 cnoreabbrev <expr> vsb (getcmdtype() == ':' && getcmdline() =~ '^vsb$')? 'vert sb' : 'vsb'
 
-" Replace 
-" cnoreabbrev <expr> rep (getcmdtype() == ':' && getcmdline() =~ '^rep$')? 
+" Replace
+" cnoreabbrev <expr> rep (getcmdtype() == ':' && getcmdline() =~ '^rep$')?
 "   \ 's/' . expand('<cword>') . '/<Left>' : 'rep'
 " command -nargs=1 Replace exe 'normal! ma:%s/' . expand('<cword>') . '/' . <q-args> . '/g<CR>`a'
 function s:Replace(pat, sub, ...) range
   exe a:firstline . ',' . a:lastline . 's/' . a:pat. '/' . a:sub . '/g' . (exists("a:1") ? 'c' : '')
 endfunction
 command -nargs=* -range=% Replace <line1>,<line2>call s:Replace(<f-args>)
-nnoremap <Leader>re :Replace <C-R><C-W> 
-vnoremap <Leader>re :Replace <C-R><C-W> 
+nnoremap <Leader>re :Replace <C-R><C-W>
+vnoremap <Leader>re :Replace <C-R><C-W>
 
 " Anonymous IP
 command -nargs=0 AnonyIP exe "normal!" .
@@ -181,7 +186,7 @@ nnoremap <silent> <Leader>gg :call <SID>ToggleGstatus()<CR>
 " Show only vim-fugitive
 function! s:GitOnly() abort
   Git
-  wincmd o 
+  wincmd o
 endfunction
 
 nnoremap <silent> <Leader>GG :call <SID>GitOnly()<CR>
