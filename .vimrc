@@ -41,7 +41,7 @@ inoremap <C-U> <C-G>u<C-U>
 nnoremap <silent> <Leader>ts :let tmp=@/<CR>:%s/\s\+$//ge<CR>:let @/=tmp<CR>
 
 " Delete continuous spaces
-nnoremap ds lgEldW
+" nnoremap ds lgEldW
 
 " Quickfix buffer list
 nnoremap <silent> <Leader>ls :call setqflist(getbufinfo({'buflisted':1})) \| copen<CR>
@@ -181,12 +181,32 @@ nnoremap <silent> <Leader>GG :call <SID>GitOnly()<CR>
 " DVC
 autocmd! BufNewFile,BufRead Dvcfile,*.dvc,dvc.lock setfiletype yaml
 
-" Declaration for vim-lsc
+" vim-lsc
 let g:lsc_server_commands = { 'python' : 'pyright-langserver --stdio'}
 let g:lsc_auto_map = v:true
 let g:lsc_enable_autocomplete = v:false
-let g:lsc_enable_diagnostics = v:false
-let g:lsc_enable_highlights = v:false
+let g:lsc_enable_diagnostics = v:true
+let g:lsc_enable_highlights = v:true
+highlight link lscReference Search
+
+" vim-commentary
+nmap <C-_> <Plug>CommentaryLine
+vmap <C-_> <Plug>Commentary
+
+" Plugins
+let s:vim_plug = s:scriptexists('plug.vim')
+if s:vim_plug == 1
+  call plug#begin()
+  Plug 'tpope/vim-fugitive', { 'tag': 'v3.7' }
+  Plug 'tpope/vim-commentary'
+  Plug 'tpope/vim-surround'
+  Plug 'tpope/vim-repeat'
+
+  Plug 'ctrlpvim/ctrlp.vim'
+  Plug 'pechorin/any-jump.vim'
+  Plug 'natebosch/vim-lsc'
+  call plug#end()
+endif
 
 " Using bash completion for Gclog
 
@@ -197,13 +217,3 @@ let g:lsc_enable_highlights = v:false
 "     return bash#complete(l:command)
 " endfunction
 
-" Plugins
-let s:vim_plug = s:scriptexists('plug.vim')
-if s:vim_plug == 1
-  call plug#begin()
-  Plug 'tpope/vim-fugitive', { 'tag': 'v3.7'}
-  Plug 'ctrlpvim/ctrlp.vim'
-  Plug 'pechorin/any-jump.vim'
-  Plug 'natebosch/vim-lsc'
-  call plug#end()
-endif
