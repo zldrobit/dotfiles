@@ -73,6 +73,10 @@ nnoremap <silent><Leader>ch :silent exe "e " . substitute(expand('%'), '\.\([ch]
 " Change dir to current file
 nnoremap <silent><Leader>cd :chdir %:p:h<CR>
 
+" Readline style insert
+inoremap <C-a>  <C-o>^
+inoremap <C-e>  <C-o>$
+
 " Vertical terminal
 cnoreabbrev <expr> vterm (getcmdtype() == ':' && getcmdline() =~ '^vterm$')? 'vert term' : 'vterm'
 
