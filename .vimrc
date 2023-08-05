@@ -71,12 +71,14 @@ nnoremap <Leader>rc :Vimrc<CR>
 nnoremap <Leader>cu :set cursorline! cursorcolumn!<CR>
 
 " Switch between h/hpp and c/cpp files
-nnoremap <silent><Leader>ch :silent exe "e " . substitute(expand('%'), '\.\([ch]\)\(pp\)$',
+nnoremap <silent> <Leader>ch :silent exe "e " . substitute(expand('%'), '\.\([ch]\)\(pp\)$',
     \ '\= "." . (submatch(1) == "c" ? "h" : "c") . submatch(2)', "")<CR>`"
 
 " Change dir to current file
-nnoremap <silent><Leader>cd :chdir %:p:h<CR>
+nnoremap <silent> <Leader>cd :chdir %:p:h<CR>
 
+" New tab for the current window
+nnoremap <silent> <C-W>t :tab split<CR>
 " Readline style insert
 inoremap <C-a>  <C-o>^
 inoremap <C-e>  <C-o>$
@@ -130,8 +132,8 @@ function s:BufSearch(pat)
   cw
 endfunction
 command -nargs=1 BufSearch call s:BufSearch(<q-args>)
-nnoremap <silent><Leader>bs :BufSearch <C-R><C-W><CR>
-vnoremap <silent><Leader>bs :<C-U>BufSearch <C-R><C-W><CR>
+nnoremap <silent> <Leader>bs :BufSearch <C-R><C-W><CR>
+vnoremap <silent> <Leader>bs :<C-U>BufSearch <C-R><C-W><CR>
 
 " Search in git ls-files
 function s:GitSearch(pat)
@@ -191,7 +193,12 @@ endfunction
 
 nnoremap <silent> <Leader>GG :call <SID>GitOnly()<CR>
 
-autocmd! FileType fugitive nmap <silent> dV dv:call <SID>ToggleGstatus()<CR>
+augroup my-fugitive
+  au!
+  au FileType fugitive nmap <silent> dV dv:call <SID>ToggleGstatus()<CR>
+  au FileType fugitive nnoremap <silent> m< :silent make pre-git<CR><C-L>
+  au FileType fugitive nnoremap <silent> m> :silent make post-git<CR><C-L>
+augroup END
 
 " Python
 autocmd! FileType python setlocal ts=8 sts=4 sw=4 expandtab
