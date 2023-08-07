@@ -227,6 +227,7 @@ if s:vim_plug == 1
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-repeat'
 
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'ctrlpvim/ctrlp.vim'
   Plug 'mileszs/ack.vim'  " , { 'tag': 'v1.0.9' }
