@@ -209,10 +209,25 @@ autocmd! BufNewFile,BufRead Dvcfile,*.dvc,dvc.lock setfiletype yaml
 " vim-lsc
 let g:lsc_server_commands = { 'python' : 'pyright-langserver --stdio'}
 let g:lsc_auto_map = v:true
-let g:lsc_enable_autocomplete = v:false
-let g:lsc_enable_diagnostics = v:true
-let g:lsc_enable_highlights = v:true
-highlight link lscReference Search
+let s:lsc_tips = v:false
+function! s:ToggleLscTips()
+  if s:lsc_tips == v:true
+    let g:lsc_enable_autocomplete = v:false
+    let g:lsc_enable_diagnostics = v:false
+    let g:lsc_enable_highlights = v:false
+    highlight link lscReference Normal
+    let s:lsc_tips = v:false
+  else
+    let g:lsc_enable_autocomplete = v:true
+    let g:lsc_enable_diagnostics = v:true
+    let g:lsc_enable_highlights = v:true
+    highlight link lscReference Search
+    let s:lsc_tips = v:true
+  endif
+endfunction
+let s:lsc_tips = !s:lsc_tips
+call s:ToggleLscTips()
+nnoremap <silent> <Leader>tt :call <SID>ToggleLscTips()<CR>
 
 " vim-commentary
 nmap <C-_> <Plug>CommentaryLine
