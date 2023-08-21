@@ -11,7 +11,7 @@ set incsearch
 set nomodeline
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set shiftround
-set pastetoggle=<Leader>pa
+" set pastetoggle=<Leader>pa
 set bg=dark
 " set mouse=n
 
@@ -33,6 +33,8 @@ set laststatus=2
 
 syntax on
 filetype plugin indent on
+
+nnoremap <silent> <Leader>pa :set paste!<CR>
 
 inoremap <C-H> <C-G>u<C-H>
 inoremap <C-U> <C-G>u<C-U>
@@ -123,6 +125,19 @@ function s:Indent(...)
   endif
 endfunction
 command -nargs=? IndentWithSpaces call s:Indent(<args>)
+
+" Search in current buffers
+function! s:Search(pat)
+  echo a:pat
+  let l:bufnr = bufnr('%')
+  exe 'cex [] | silent! vimgrepadd /' . a:pat . '/j %'
+  exe 'buffer ' . l:bufnr
+  cw
+  let @/ = a:pat
+endfunction
+command -nargs=1 Search call s:Search(<q-args>)
+nnoremap <silent> <Leader>ss :Search <C-R><C-W><CR>
+vnoremap <silent> <Leader>ss "zy:<C-U>Search <C-R>z<CR>
 
 " Search in buffers
 function s:BufSearch(pat)
