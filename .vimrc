@@ -81,6 +81,7 @@ nnoremap <silent> <Leader>cd :chdir %:p:h<CR>
 
 " New tab for the current window
 nnoremap <silent> <C-W>t :tab split<CR>
+
 " Readline style insert
 inoremap <C-a>  <C-o>^
 inoremap <C-e>  <C-o>$
@@ -89,6 +90,9 @@ inoremap <C-f>  <C-o>W
 execute "set <M-\\>=\e\\"
 nnoremap <M-\>  lgEldW
 inoremap <M-\>  <C-c>llgEldWi
+
+" Readline style in command mode
+cnoremap <C-a> <Home>
 
 " Vertical terminal
 cnoreabbrev <expr> vterm (getcmdtype() == ':' && getcmdline() =~ '^vterm$')? 'vert term' : 'vterm'
