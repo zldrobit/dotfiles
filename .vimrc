@@ -64,7 +64,7 @@ nnoremap <F4> :cprev<CR>
 
 " Edit vimrc
 function s:Vimrc()
-  exe ':vs' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
+  exe ':tabe' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
 endfunction
 command -nargs=0 Vimrc call s:Vimrc()
 nnoremap <Leader>rc :Vimrc<CR>
@@ -81,18 +81,20 @@ nnoremap <silent> <Leader>cd :chdir %:p:h<CR>
 
 " New tab for the current window
 nnoremap <silent> <C-W>t :tab split<CR>
+tnoremap <silent> <C-W>t <C-W>:tab split<CR>
 
 " Readline style insert
-inoremap <C-a>  <C-o>^
-inoremap <C-e>  <C-o>$
-inoremap <C-b>  <C-o>B
-inoremap <C-f>  <C-o>W
+inoremap <C-A>  <C-O>^
+inoremap <C-E>  <C-O>$
+inoremap <C-B>  <C-O>B
+inoremap <C-F>  <C-O>W
 execute "set <M-\\>=\e\\"
 nnoremap <M-\>  lgEldW
-inoremap <M-\>  <C-c>llgEldWi
+inoremap <M-\>  <C-C>llgEldWi
 
 " Readline style in command mode
-cnoremap <C-a> <Home>
+cnoremap <C-A> <Home>
+" cnoremap <C-K> <Home>
 
 " Vertical terminal
 cnoreabbrev <expr> vterm (getcmdtype() == ':' && getcmdline() =~ '^vterm$')? 'vert term' : 'vterm'
