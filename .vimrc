@@ -63,11 +63,16 @@ nnoremap <F3> :cnext<CR>
 nnoremap <F4> :cprev<CR>
 
 " Edit vimrc
-function s:Vimrc()
-  exe ':tabe' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
+function s:Vimrc(tab)
+  if a:tab
+    exe ':tabe' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
+  else
+    exe ':vs' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
+  endif
 endfunction
-command -nargs=0 Vimrc call s:Vimrc()
-nnoremap <Leader>rc :Vimrc<CR>
+command -nargs=1 Vimrc call s:Vimrc(<args>)
+nnoremap <Leader>rc :Vimrc v:false<CR>
+nnoremap <Leader>Rc :Vimrc v:true<CR>
 
 " Switch cursor status
 nnoremap <Leader>cu :set cursorline! cursorcolumn!<CR>
