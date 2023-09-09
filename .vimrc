@@ -274,6 +274,7 @@ if s:vim_plug == 1
   Plug 'mileszs/ack.vim'  " , { 'tag': 'v1.0.9' }
   Plug 'pechorin/any-jump.vim'
   Plug 'natebosch/vim-lsc'
+  Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
   call plug#end()
 endif
 
