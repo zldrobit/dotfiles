@@ -12,12 +12,20 @@ set nomodeline
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set shiftround
 " set pastetoggle=<Leader>pa
-set bg=dark
+if has('gui')
+  set bg=light
+else
+  set bg=dark
+endif
 " set mouse=n
 
 " vim-fugitive status line
 function s:scriptexists(script)
-  silent let scriptlist = systemlist('find ~/.vim -name '. a:script)
+  if has('unix')
+    silent let scriptlist = systemlist('find ~/.vim -name '. a:script)
+  elseif has('win32')
+    silent let scriptlist = systemlist('"cd %userprofile%\vimfiles && dir /s '. a:script . '"')
+  endif
   if len(scriptlist) > 0
     return 1
   endif
@@ -93,7 +101,9 @@ inoremap <C-A>  <C-O>^
 inoremap <C-E>  <C-O>$
 inoremap <C-B>  <C-O>B
 inoremap <C-F>  <C-O>W
-execute "set <M-\\>=\e\\"
+if &shell =~ 'bash'
+  execute "set <M-\\>=\e\\"
+endif
 nnoremap <M-\>  lgEldW
 inoremap <M-\>  <C-C>llgEldWi
 
