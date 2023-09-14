@@ -24,7 +24,7 @@ function s:scriptexists(script)
   if has('unix')
     silent let scriptlist = systemlist('find ~/.vim -name '. a:script)
   elseif has('win32')
-    silent let scriptlist = systemlist('"cd %userprofile%\vimfiles && dir /s '. a:script . '"')
+    silent let scriptlist = systemlist('"cd %userprofile%\vimfiles && dir /s '. a:script . ' 2>&1 | findstr ' . a:script . '"')
   endif
   if len(scriptlist) > 0
     return 1
