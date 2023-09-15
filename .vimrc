@@ -12,7 +12,7 @@ set nomodeline
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set shiftround
 " set pastetoggle=<Leader>pa
-if has('gui')
+if has('gui_running')
   set bg=light
 else
   set bg=dark
