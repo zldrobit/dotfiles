@@ -200,6 +200,24 @@ nnoremap [8;2~ g,
 
 " TODO: open on last edited position
 
+" Insert numbers in the begin of lines
+function! s:InsertLineNumbers(...) range
+  let counter = a:0 > 0 ? a:1 : 0
+  let suffix = a:0 > 1 ? a:2 . " " : " "
+
+  for i in range(a:firstline, a:lastline)
+    execute i . "normal! I" . printf("%3d", counter) . suffix
+    " execute i . "normal! I" . "001" . suffix
+    let counter = counter + 1
+  endfor
+endfunction
+
+command -nargs=* -range=% InsertLineNumbers <line1>,<line2>call s:InsertLineNumbers(<f-args>)
+vnoremap <Leader>in :InsertLineNumbers<CR>
+
+" Insert in terminal buffer the filename of the last visited window
+tnoremap <silent> <C-W>f <C-W>:call term_sendkeys(bufnr(), fnamemodify(bufname(winbufnr(winnr('#'))), ':p'))<CR>
+
 " Preview for quickfix
 augroup PreviewQuickfix
   au!
