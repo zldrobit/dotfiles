@@ -200,8 +200,8 @@ nnoremap [8;2~ g,
 
 " TODO: open on last edited position
 
-" Insert numbers in the begin of lines
-function! s:InsertLineNumbers(...) range
+" Prepend numbers in lines
+function! s:PrependLineNumbers(...) range
   let counter = a:0 > 0 ? a:1 : 0
   let suffix = a:0 > 1 ? a:2 . " " : " "
 
@@ -212,8 +212,9 @@ function! s:InsertLineNumbers(...) range
   endfor
 endfunction
 
-command -nargs=* -range=% InsertLineNumbers <line1>,<line2>call s:InsertLineNumbers(<f-args>)
-vnoremap <Leader>in :InsertLineNumbers<CR>
+command -nargs=* -range=% PrependLineNumbers <line1>,<line2>call s:PrependLineNumbers(<f-args>)
+vnoremap <Leader>nu :PrependLineNumbers<CR>
+nnoremap <Leader>nu :PrependLineNumbers<CR>
 
 " Insert in terminal buffer the filename of the last visited window
 tnoremap <silent> <C-W>f <C-W>:call term_sendkeys(bufnr(), fnamemodify(bufname(winbufnr(winnr('#'))), ':p'))<CR>
