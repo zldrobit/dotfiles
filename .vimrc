@@ -8,7 +8,7 @@ set display=truncate
 set scrolloff=5
 set hlsearch
 set incsearch
-set nomodeline
+" set nomodeline
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set shiftround
 " set pastetoggle=<Leader>pa
@@ -121,12 +121,34 @@ cnoreabbrev <expr> vsb (getcmdtype() == ':' && getcmdline() =~ '^vsb$')? 'vert s
 " cnoreabbrev <expr> rep (getcmdtype() == ':' && getcmdline() =~ '^rep$')?
 "   \ 's/' . expand('<cword>') . '/<Left>' : 'rep'
 " command -nargs=1 Replace exe 'normal! ma:%s/' . expand('<cword>') . '/' . <q-args> . '/g<CR>`a'
-function s:Replace(pat, sub, ...) range
-  exe a:firstline . ',' . a:lastline . 's/' . a:pat. '/' . a:sub . '/g' . (exists("a:1") ? 'c' : '')
+" function s:Replace(pat, sub, ...) range
+"   exe a:firstline . ',' . a:lastline . 's/' . a:pat. '/' . a:sub . '/g' . (exists("a:1") ? 'c' : '')
+" endfunction
+" command -nargs=* -range=% Replace <line1>,<line2>call s:Replace(<f-args>)
+" nnoremap <Leader>re :Replace <C-R><C-W>
+" vnoremap <Leader>re :Replace <C-R><C-W>
+nnoremap <Leader>re :%s/<C-R><C-W>//gI<Left><Left><Left>
+vnoremap <Leader>re :%s/<C-R><C-W>//gI<Left><Left><Left>
+nnoremap <Leader>Re :%s/\<<C-R><C-W>/>\/gI<Left><Left><Left>
+vnoremap <Leader>Re :%s/\<<C-R><C-W>/>\/gI<Left><Left><Left>
+
+" List chars
+let s:listchars = &listchars
+function s:ToggleListChars()
+	if &list == 0
+		let &listchars = "tab:>-,trail:-"
+		set list
+	else
+		let &listchars = s:listchars
+		set nolist
+	endif
 endfunction
-command -nargs=* -range=% Replace <line1>,<line2>call s:Replace(<f-args>)
-nnoremap <Leader>re :Replace <C-R><C-W>
-vnoremap <Leader>re :Replace <C-R><C-W>
+command -nargs=0 ToggleListChars call s:ToggleListChars()
+nnoremap <Leader>li :ToggleListChars <CR>
+
+
+" sudo overwrite
+cabbrev w!! w !sudo tee % >/dev/null 2>&1
 
 " Anonymous IP
 command -nargs=0 AnonyIP exe "normal!" .
@@ -323,3 +345,4 @@ endif
 "     return bash#complete(l:command)
 " endfunction
 
+" vim: set sw=2 ts=2 sts=2:
