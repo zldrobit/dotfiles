@@ -288,6 +288,11 @@ nnoremap <silent> <Leader>tt :call <SID>ToggleLscTips()<CR>
 nmap <C-_> <Plug>CommentaryLine
 vmap <C-_> <Plug>Commentary
 
+" NERDTree Directory Collapsible/Expandable Indication
+"
+let g:NERDTreeDirArrowCollapsible="-"
+let g:NERDTreeDirArrowExpandable="+"
+
 " Plugins
 let s:vim_plug = s:scriptexists('plug.vim')
 if s:vim_plug == 1
@@ -304,6 +309,8 @@ if s:vim_plug == 1
   Plug 'pechorin/any-jump.vim'
   Plug 'natebosch/vim-lsc'
   Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+
+  Plug 'preservim/nerdtree'
   call plug#end()
 endif
 

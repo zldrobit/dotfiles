@@ -2,3 +2,10 @@
 
 "\C-f": vi-fword
 "\C-b": vi-bword
+
+# forward delete one word
+"\C-x0": set-mark
+"\C-x1": vi-eword
+"\C-x2": forward-char
+"\C-x3": kill-region
+"\ek": "\C-x0\C-x1\C-x2\C-x3"
