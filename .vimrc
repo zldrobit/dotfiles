@@ -73,9 +73,9 @@ nnoremap <F4> :cprev<CR>
 " Edit vimrc
 function s:Vimrc(tab)
   if a:tab
-    exe ':tabe' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
+    exe ':tabe ' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
   else
-    exe ':vs' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
+    exe ':vs ' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
   endif
 endfunction
 command -nargs=1 Vimrc call s:Vimrc(<args>)
