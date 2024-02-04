@@ -24,7 +24,7 @@ function s:scriptexists(script)
   if has('unix')
     silent let scriptlist = systemlist('find ~/.vim -name '. a:script)
   elseif has('win32')
-    silent let scriptlist = systemlist('"cd %userprofile%\vimfiles && dir /s '. a:script . ' 2>&1 | findstr ' . a:script . '"')
+    silent let scriptlist = systemlist('"cd /d %userprofile%\vimfiles && dir /s '. a:script . ' 2>&1 | findstr ' . a:script . '"')
   endif
   if len(scriptlist) > 0
     return 1
@@ -374,6 +374,8 @@ augroup lsp_install
     " call s:on_lsp_buffer_enabled only for languages that has the server registered.
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
+
+let g:lsp_diagnostics_enabled = 0
 
 " Using bash completion for Gclog
 
