@@ -284,27 +284,27 @@ autocmd! FileType python setlocal ts=8 sts=4 sw=4 expandtab
 autocmd! BufNewFile,BufRead Dvcfile,*.dvc,dvc.lock setfiletype yaml
 
 " vim-lsc
-let g:lsc_server_commands = { 'python' : 'pyright-langserver --stdio'}
-let g:lsc_auto_map = v:true
-let s:lsc_tips = v:false
-function! s:ToggleLscTips()
-  if s:lsc_tips == v:true
-    let g:lsc_enable_autocomplete = v:false
-    let g:lsc_enable_diagnostics = v:false
-    let g:lsc_enable_highlights = v:false
-    highlight link lscReference Normal
-    let s:lsc_tips = v:false
-  else
-    let g:lsc_enable_autocomplete = v:true
-    let g:lsc_enable_diagnostics = v:true
-    let g:lsc_enable_highlights = v:true
-    highlight link lscReference Search
-    let s:lsc_tips = v:true
-  endif
-endfunction
-let s:lsc_tips = !s:lsc_tips
-call s:ToggleLscTips()
-nnoremap <silent> <Leader>tt :call <SID>ToggleLscTips()<CR>
+" let g:lsc_server_commands = { 'python' : 'pyright-langserver --stdio'}
+" let g:lsc_auto_map = v:true
+" let s:lsc_tips = v:false
+" function! s:ToggleLscTips()
+"   if s:lsc_tips == v:true
+"     let g:lsc_enable_autocomplete = v:false
+"     let g:lsc_enable_diagnostics = v:false
+"     let g:lsc_enable_highlights = v:false
+"     highlight link lscReference Normal
+"     let s:lsc_tips = v:false
+"   else
+"     let g:lsc_enable_autocomplete = v:true
+"     let g:lsc_enable_diagnostics = v:true
+"     let g:lsc_enable_highlights = v:true
+"     highlight link lscReference Search
+"     let s:lsc_tips = v:true
+"   endif
+" endfunction
+" let s:lsc_tips = !s:lsc_tips
+" call s:ToggleLscTips()
+" nnoremap <silent> <Leader>tt :call <SID>ToggleLscTips()<CR>
 
 " vim-commentary
 nmap <C-_> <Plug>CommentaryLine
@@ -329,12 +329,51 @@ if s:vim_plug == 1
   Plug 'ctrlpvim/ctrlp.vim'
   Plug 'mileszs/ack.vim'  " , { 'tag': 'v1.0.9' }
   Plug 'pechorin/any-jump.vim'
-  Plug 'natebosch/vim-lsc'
+  " Plug 'natebosch/vim-lsc'
+	Plug 'prabirshrestha/vim-lsp'
   Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
   Plug 'preservim/nerdtree'
   call plug#end()
 endif
+
+if executable('pylsp')
+    " pip install python-lsp-server
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pylsp',
+        \ 'cmd': {server_info->['pylsp']},
+        \ 'allowlist': ['python'],
+        \ })
+endif
+
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> K <plug>(lsp-hover)
+    nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+    
+    " refer to doc to add more commands
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
 
 " Using bash completion for Gclog
 
