@@ -14,26 +14,31 @@ set shiftround
 " set pastetoggle=<Leader>pa
 set bg=dark
 if has('gui_running')
-	colorscheme desert
+	colorscheme desert  " signcolumn is not highlighted
 	let g:lsp_diagnostics_enabled = 1
+	let g:lsp_document_highlight_enabled = 1
 else
 	let g:lsp_diagnostics_enabled = 0
+	let g:lsp_document_highlight_enabled = 0
 endif
 set guifont=Consolas:h11
+set guicursor+=a:blinkon0
 " set mouse=n
 
-" vim-fugitive status line
 function s:scriptexists(script)
-  if has('unix')
-		let scriptpath = expand('~') . '/.vim/**/'
-  elseif has('win32')
-		let scriptpath = expand('~') . '/vimfiles/**/'
-  endif
-	let res = glob(scriptpath . a:script)
+  " if has('unix')
+		" let scriptpath = $HOME . '/.vim/**/'
+  " elseif has('win32')
+		" let scriptpath = $USERPROFILE . '/vimfiles/**/'
+  " endif
+	let scriptpath = split(&rtp, ',')[0]
+	let res = glob(scriptpath . '/**/' . a:script)
   if len(res) > 0
     return 1
   endif
 endfunction
+
+" vim-fugitive status line
 let s:fugitive = s:scriptexists('vim-fugitive')
 set statusline=%<%f\ %h%m%r
 if s:fugitive == 1
