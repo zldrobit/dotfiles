@@ -12,21 +12,25 @@ set incsearch
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set shiftround
 " set pastetoggle=<Leader>pa
+set bg=dark
 if has('gui_running')
-  set bg=light
+	colorscheme desert
+	let g:lsp_diagnostics_enabled = 1
 else
-  set bg=dark
+	let g:lsp_diagnostics_enabled = 0
 endif
+set guifont=Consolas:h11
 " set mouse=n
 
 " vim-fugitive status line
 function s:scriptexists(script)
   if has('unix')
-    silent let scriptlist = systemlist('find ~/.vim -name '. a:script)
+		let scriptpath = expand('~') . '/.vim/**/'
   elseif has('win32')
-    silent let scriptlist = systemlist('"cd /d %userprofile%\vimfiles && dir /s '. a:script . ' 2>&1 | findstr ' . a:script . '"')
+		let scriptpath = expand('~') . '/vimfiles/**/'
   endif
-  if len(scriptlist) > 0
+	let res = glob(scriptpath . a:script)
+  if len(res) > 0
     return 1
   endif
 endfunction
@@ -309,6 +313,8 @@ autocmd! BufNewFile,BufRead Dvcfile,*.dvc,dvc.lock setfiletype yaml
 " vim-commentary
 nmap <C-_> <Plug>CommentaryLine
 vmap <C-_> <Plug>Commentary
+nmap <C-/> <Plug>CommentaryLine
+vmap <C-/> <Plug>Commentary
 
 " NERDTree Directory Collapsible/Expandable Indication
 "
@@ -326,11 +332,11 @@ if s:vim_plug == 1
 
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
-  Plug 'ctrlpvim/ctrlp.vim'
-  Plug 'mileszs/ack.vim'  " , { 'tag': 'v1.0.9' }
-  Plug 'pechorin/any-jump.vim'
-  " Plug 'natebosch/vim-lsc'
+  " Plug 'ctrlpvim/ctrlp.vim'
+  " Plug 'mileszs/ack.vim'  " , { 'tag': 'v1.0.9' }
+  " Plug 'pechorin/any-jump.vim'
 	Plug 'prabirshrestha/vim-lsp'
+	Plug 'mattn/vim-lsp-settings'
   Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
   Plug 'preservim/nerdtree'
@@ -348,7 +354,7 @@ endif
 
 function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
-    setlocal signcolumn=yes
+		if g:lsp_diagnostics_enabled == 1 | setlocal signcolumn=yes | endif
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> gd <plug>(lsp-definition)
     nmap <buffer> gs <plug>(lsp-document-symbol-search)
@@ -375,7 +381,6 @@ augroup lsp_install
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
 
-let g:lsp_diagnostics_enabled = 0
 
 " Using bash completion for Gclog
 
