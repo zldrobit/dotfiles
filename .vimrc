@@ -348,6 +348,9 @@ if s:vim_plug == 1
   call plug#end()
 endif
 
+" vim-lsp
+ 
+" let g:lsp_log_file = expand('~/vim-lsp.log')
 if executable('pylsp')
     " pip install python-lsp-server
     au User lsp_setup call lsp#register_server({
@@ -386,6 +389,28 @@ augroup lsp_install
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
 
+let g:lsp_settings = {
+\   'pylsp': {
+\     'workspace_config': {
+\       'pylsp': {
+\         'plugins': {
+\           'pycodestyle': {
+\             'enabled': v:false,
+\           },
+\           'autopep8': {
+\             'enabled': v:false,
+\           },
+\           'yapf': {
+\             'enabled': v:true,
+\           },
+\           'flake8': {
+\             'enabled': v:false,
+\           },
+\         }
+\       }
+\     }
+\   },
+\}
 
 " Using bash completion for Gclog
 
