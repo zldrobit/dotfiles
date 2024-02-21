@@ -286,8 +286,12 @@ augroup my-fugitive
   au FileType fugitive nnoremap <silent> m> :silent make post-git<CR><C-L>
 augroup END
 
+" gitgutter
+let g:gitgutter_enabled = 0
+nnoremap <Leader>ga :GitGutterToggle<CR>
+
 " Python
-autocmd! FileType python setlocal ts=8 sts=4 sw=4 expandtab
+" autocmd! FileType python setlocal ts=8 sts=4 sw=4 expandtab
 
 " DVC
 autocmd! BufNewFile,BufRead Dvcfile,*.dvc,dvc.lock setfiletype yaml
@@ -334,6 +338,7 @@ if s:vim_plug == 1
   Plug 'tpope/vim-commentary'
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-repeat'
+	Plug 'airblade/vim-gitgutter'
 
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
@@ -421,4 +426,4 @@ let g:lsp_settings = {
 "     return bash#complete(l:command)
 " endfunction
 
-" vim: set sw=2 ts=2 sts=2:
+" vim: set sw=2 ts=2 sts=2 expandtab:
