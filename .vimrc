@@ -286,9 +286,15 @@ augroup my-fugitive
   au FileType fugitive nnoremap <silent> m> :silent make post-git<CR><C-L>
 augroup END
 
+" fold :Gclog by files
+au FileType git setlocal foldmethod=syntax
+
 " gitgutter
 let g:gitgutter_enabled = 0
 nnoremap <Leader>ga :GitGutterToggle<CR>
+
+" FZF
+nnoremap <Leader>ff :FZF<CR>
 
 " Python
 " autocmd! FileType python setlocal ts=8 sts=4 sw=4 expandtab
