@@ -120,6 +120,9 @@ inoremap <M-\>  <C-C>llgEldWi
 cnoremap <C-A> <Home>
 " cnoremap <C-K> <Home>
 
+" inline calculation
+nnoremap <Leader>ca :s/=.*$//e<CR>:let @/ = ''<CR>^y$i<End> = <C-R>=<C-R>0<CR><C-C>
+
 " Vertical terminal
 cnoreabbrev <expr> vterm (getcmdtype() == ':' && getcmdline() =~ '^vterm$')? 'vert term' : 'vterm'
 
@@ -331,6 +334,12 @@ vmap <C-_> <Plug>Commentary
 nmap <C-/> <Plug>CommentaryLine
 vmap <C-/> <Plug>Commentary
 
+" vimwiki
+let g:vimwiki_list = [{'path': '~/vimwiki/',
+                      \ 'syntax': 'markdown', 'ext': 'md'}]
+let g:vimwiki_filetypes = ["markdown"]
+let g:vimwiki_global_ext = 0
+
 " NERDTree Directory Collapsible/Expandable Indication
 "
 let g:NERDTreeDirArrowCollapsible="-"
@@ -353,6 +362,7 @@ if s:vim_plug == 1
   " Plug 'pechorin/any-jump.vim'
 	Plug 'prabirshrestha/vim-lsp'
 	Plug 'mattn/vim-lsp-settings'
+  Plug 'vimwiki/vimwiki'
   Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
   Plug 'preservim/nerdtree'
