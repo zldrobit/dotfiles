@@ -417,6 +417,13 @@ let g:lsp_settings = {
 \   },
 \}
 
+function Tapi_Drop(bufnum, arglist)
+	let l:pwd = a:arglist[0]
+	let l:filename = a:arglist[1]
+	let l:fullpath = l:pwd .. '/' .. l:filename
+	execute "drop " .. l:fullpath
+endfunction
+
 " Using bash completion for Gclog
 
 " function GclogCompletion(ArgLead, CmdLine, CursorPos)
