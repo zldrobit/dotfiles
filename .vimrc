@@ -17,6 +17,15 @@ if has('gui_running')
 	colorscheme desert  " signcolumn is not highlighted
 	let g:lsp_diagnostics_enabled = 1
 	let g:lsp_document_highlight_enabled = 1
+  " set clipboard=unnamed
+  vnoremap <C-S-C> "+y
+  nnoremap <C-S-V> "+gP
+  nnoremap <C-V> <C-V>
+  " paste_cmd in paste.vim?
+  vnoremap <C-S-V> "+gP
+  inoremap <C-S-V> <C-R>+
+  cnoremap <C-S-V> <C-R>+
+  nnoremenu 1.1 PopUp.Back <C-O>
 else
 	let g:lsp_diagnostics_enabled = 0
 	let g:lsp_document_highlight_enabled = 0
@@ -105,6 +114,17 @@ nnoremap <silent> <Leader>cd :chdir %:p:h<CR>
 nnoremap <silent> <C-W>t :tab split<CR>
 tnoremap <silent> <C-W>t <C-W>:tab split<CR>
 
+" Zen mode
+nnoremap <silent> <Leader>ze :ZenMode<CR>
+tnoremap <silent> <Leader>ze :ZenMode<CR>
+function s:ZenMode()
+  let ostal = &stal
+  let &stal = 0
+  tabe %
+  exec "au WinLeave <buffer> ++once let &stal = " .. ostal
+endfunction
+command -nargs=0 ZenMode call s:ZenMode()
+
 " Readline style insert
 inoremap <C-A>  <C-O>^
 inoremap <C-E>  <C-O>$
@@ -120,8 +140,16 @@ inoremap <M-\>  <C-C>llgEldWi
 cnoremap <C-A> <Home>
 " cnoremap <C-K> <Home>
 
+" Tab Indent
+nnoremap <Tab> mz>>`z
+nnoremap <S-Tab> mz<<`z
+vnoremap <Tab> mz>gv`z
+vnoremap <S-Tab> mz<gv`z
+
 " inline calculation
-nnoremap <Leader>ca :s/=.*$//e<CR>:let @/ = ''<CR>^y$i<End> = <C-R>=<C-R>0<CR><C-C>
+nnoremap = :s/\s*=.*$//e<CR>:let @/ = ''<CR>^y$i<End> = <C-R>=<C-R>0<CR><C-C>
+vnoremap = :<C-U>'<,'>s/\%V\s*=.*$//e<CR>gvyi<End> = <C-R>=<C-R>0<CR><C-C>
+" :'<,'>s/=.*$//e<CR>:let @/ = ''<CR>^y$i<End> = <C-R>=<C-R>0<CR><C-C>
 
 " Vertical terminal
 cnoreabbrev <expr> vterm (getcmdtype() == ':' && getcmdline() =~ '^vterm$')? 'vert term' : 'vterm'
@@ -339,6 +367,35 @@ let g:vimwiki_list = [{'path': '~/vimwiki/',
                       \ 'syntax': 'markdown', 'ext': 'md'}]
 let g:vimwiki_filetypes = ["markdown"]
 let g:vimwiki_global_ext = 0
+let g:vimwiki_markdown_link_ext = 1
+
+" if has('gui_running')
+"   let g:vimwiki_key_mappings = { 'mouse': 1 }
+" endif
+if s:scriptexists('vimwiki')
+  augroup my-vimwiki
+    au!
+    au FileType *vimwiki* unmenu PopUp.Back
+    au FileType *vimwiki* nnoremenu 1.1 PopUp.Back <Plug>VimwikiGoBackLink
+    au FileType *vimwiki* nnoremap <buffer> <C-LeftMouse> <LeftMouse><Plug>VimwikiFollowLink
+    au FileType *vimwiki* nnoremap <buffer> <2-LeftMouse> :call vimwiki#base#follow_link('nosplit', 0, 1, "\\<2-LeftMouse>")<CR>
+  augroup END
+endif
+
+" markdown-preview
+let g:mkdp_auto_start = 0
+augroup my-markdown-preview
+  au!
+  au FileType markdown nnoremap <buffer> <C-T> :MarkdownPreviewToggle<CR>
+"   au BufWinEnter *.md {
+"     MarkdownPreviewToggle
+"     echom "BufWinEnter"
+"   }
+  " au BufWinLeave *.md {
+  "   MarkdownPreviewToggle
+  "   echom "BufWinLeave"
+  " }
+augroup END
 
 " NERDTree Directory Collapsible/Expandable Indication
 "
@@ -370,7 +427,7 @@ if s:vim_plug == 1
 endif
 
 " vim-lsp
- 
+
 " let g:lsp_log_file = expand('~/vim-lsp.log')
 if executable('pylsp')
     " pip install python-lsp-server
@@ -395,12 +452,12 @@ function! s:on_lsp_buffer_enabled() abort
     nmap <buffer> [g <plug>(lsp-previous-diagnostic)
     nmap <buffer> ]g <plug>(lsp-next-diagnostic)
     nmap <buffer> K <plug>(lsp-hover)
-    nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
-    nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
+    " nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    " nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
 
     let g:lsp_format_sync_timeout = 1000
     autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
-    
+
     " refer to doc to add more commands
 endfunction
 
