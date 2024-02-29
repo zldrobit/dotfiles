@@ -28,8 +28,8 @@ if has('gui_running')
   cnoremap <C-S-V> <C-R>+
   nnoremenu 1.1 PopUp.Back <C-O>
 else
-	let g:lsp_diagnostics_enabled = 0
-	let g:lsp_document_highlight_enabled = 0
+	let g:lsp_diagnostics_enabled = 1
+	let g:lsp_document_highlight_enabled = 1
 endif
 set guifont=Consolas:h11
 set guicursor+=a:blinkon0
@@ -430,6 +430,7 @@ endif
 
 " vim-lsp
 " let g:lsp_log_file = expand('~/vim-lsp.log')
+let g:lsp_server_verbose = 0
 let g:lsp_settings = {
 \   'pylsp': {
 \     'workspace_config': {
@@ -447,10 +448,13 @@ let g:lsp_settings = {
 \           'flake8': {
 \             'enabled': v:false,
 \           },
-\         }
+\           'ruff': {
+\             'enabled': v:true,
+\           },
+\         },
 \       }
 \     },
-" \     'args' : [ '-v' ] 
+\     'args' : g:lsp_server_verbose ? ['-v'] : []
 \   },
 \}
 
