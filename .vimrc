@@ -429,8 +429,13 @@ if s:vim_plug == 1
 endif
 
 " vim-lsp
-" let g:lsp_log_file = expand('~/vim-lsp.log')
-let g:lsp_server_verbose = 0
+let g:lsp_debug = 0  " set g:lsp_debug=1 to enable logging
+if g:lsp_debug
+  let g:lsp_log_file = expand('~/vim-lsp.log')
+  let g:lsp_server_verbose = 1
+else
+  let g:lsp_server_verbose = 0
+endif
 let g:lsp_settings = {
 \   'pylsp': {
 \     'workspace_config': {
@@ -450,6 +455,7 @@ let g:lsp_settings = {
 \           },
 \           'ruff': {
 \             'enabled': v:true,
+\             'extendSelect': [ "E" ]
 \           },
 \         },
 \       }
