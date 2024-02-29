@@ -141,6 +141,7 @@ cnoremap <C-A> <Home>
 " cnoremap <C-K> <Home>
 
 " Tab Indent
+nnoremap <C-I> <C-I>
 nnoremap <Tab> mz>>`z
 nnoremap <S-Tab> mz<<`z
 vnoremap <Tab> mz>gv`z
