@@ -13,6 +13,7 @@ set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.i
 set shiftround
 " set pastetoggle=<Leader>pa
 set bg=dark
+" set termguicolors
 if has('gui_running')
 	colorscheme desert  " signcolumn is not highlighted
 	let g:lsp_diagnostics_enabled = 1
@@ -428,16 +429,39 @@ if s:vim_plug == 1
 endif
 
 " vim-lsp
-
 " let g:lsp_log_file = expand('~/vim-lsp.log')
-if executable('pylsp')
-    " pip install python-lsp-server
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'pylsp',
-        \ 'cmd': {server_info->['pylsp']},
-        \ 'allowlist': ['python'],
-        \ })
-endif
+let g:lsp_settings = {
+\   'pylsp': {
+\     'workspace_config': {
+\       'pylsp': {
+\         'plugins': {
+\           'pycodestyle': {
+\             'enabled': v:false,
+\           },
+\           'autopep8': {
+\             'enabled': v:false,
+\           },
+\           'yapf': {
+\             'enabled': v:true,
+\           },
+\           'flake8': {
+\             'enabled': v:false,
+\           },
+\         }
+\       }
+\     },
+" \     'args' : [ '-v' ] 
+\   },
+\}
+
+" if executable('pylsp')
+"     " pip install python-lsp-server
+"     au User lsp_setup call lsp#register_server({
+"         \ 'name': 'pylsp',
+"         \ 'cmd': {server_info->['pylsp']},
+"         \ 'allowlist': ['python'],
+"         \ })
+" endif
 
 function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
@@ -468,33 +492,8 @@ augroup lsp_install
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
 
-let g:lsp_settings = {
-\   'pylsp': {
-\     'workspace_config': {
-\       'pylsp': {
-\         'plugins': {
-\           'pycodestyle': {
-\             'enabled': v:false,
-\           },
-\           'autopep8': {
-\             'enabled': v:false,
-\           },
-\           'yapf': {
-\             'enabled': v:true,
-\           },
-\           'flake8': {
-\             'enabled': v:false,
-\           },
-\         }
-\       }
-\     }
-\   },
-\}
-
-function Tapi_Drop(bufnum, arglist)
-	let l:pwd = a:arglist[0]
-	let l:filename = a:arglist[1]
-	let l:fullpath = l:pwd .. '/' .. l:filename
+function! Tapi_Drop(bufnum, arglist)
+	let l:fullpath = a:arglist[0]
 	execute "drop " .. l:fullpath
 endfunction
 
