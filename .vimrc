@@ -112,16 +112,29 @@ nnoremap <silent> <Leader>ch :silent exe "e " . substitute(expand('%'), '\.\([ch
 nnoremap <silent> <Leader>cd :chdir %:p:h<CR>
 
 " New tab for the current window
-nnoremap <silent> <C-W>t :tab split<CR>
-tnoremap <silent> <C-W>t <C-W>:tab split<CR>
+" nnoremap <silent> <C-W>t :tab split<CR>
+" tnoremap <silent> <C-W>t <C-W>:tab split<CR>
+
+" Jump to terminal window
+function s:TerminalWindow()
+  for w in getwininfo()
+    if w['terminal']
+      exec w['winnr'] .. "wincmd w"
+    endif
+  endfor
+endfunction
+command -nargs=0 TerminalWindow call s:TerminalWindow()
+nnoremap <silent> <C-W>t :TerminalWindow<CR>
 
 " Zen mode
 nnoremap <silent> <Leader>ze :ZenMode<CR>
-tnoremap <silent> <Leader>ze :ZenMode<CR>
+tnoremap <silent> <Leader>ze <C-W>:ZenMode<CR>
 function s:ZenMode()
   let ostal = &stal
   let &stal = 0
-  tabe %
+  normal mz
+  tab split
+  normal `z
   exec "au WinLeave <buffer> ++once let &stal = " .. ostal
 endfunction
 command -nargs=0 ZenMode call s:ZenMode()
@@ -436,6 +449,7 @@ if g:lsp_debug
 else
   let g:lsp_server_verbose = 0
 endif
+" E501 is not defualt in ruff
 let g:lsp_settings = {
 \   'pylsp': {
 \     'workspace_config': {
@@ -455,7 +469,7 @@ let g:lsp_settings = {
 \           },
 \           'ruff': {
 \             'enabled': v:true,
-\             'extendSelect': [ "E" ]
+\             'extendSelect': [ "E501" ]
 \           },
 \         },
 \       }
