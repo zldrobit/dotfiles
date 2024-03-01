@@ -102,7 +102,7 @@ nnoremap <Leader>rc :Vimrc v:false<CR>
 nnoremap <Leader>Rc :Vimrc v:true<CR>
 
 " Switch cursor status
-nnoremap <Leader>cu :set cursorline! cursorcolumn!<CR>
+nnoremap <silent> <Leader>cu :set cursorline! cursorcolumn!<CR>
 
 " Switch between h/hpp and c/cpp files
 nnoremap <silent> <Leader>ch :silent exe "e " . substitute(expand('%'), '\.\([ch]\)\(pp\)$',
@@ -199,7 +199,7 @@ function s:ToggleListChars()
 	endif
 endfunction
 command -nargs=0 ToggleListChars call s:ToggleListChars()
-nnoremap <Leader>li :ToggleListChars <CR>
+nnoremap <silent> <Leader>li :ToggleListChars <CR>
 
 
 " sudo overwrite
@@ -337,10 +337,10 @@ au FileType git setlocal foldmethod=syntax
 
 " gitgutter
 let g:gitgutter_enabled = 0
-nnoremap <Leader>ga :GitGutterToggle<CR>
+nnoremap <silent> <Leader>ga :GitGutterToggle<CR>
 
 " FZF
-nnoremap <Leader>ff :FZF<CR>
+nnoremap <silent> <Leader>ff :FZF<CR>
 
 " Python
 " autocmd! FileType python setlocal ts=8 sts=4 sw=4 expandtab
@@ -402,10 +402,10 @@ let g:mkdp_auto_start = 0
 augroup my-markdown-preview
   au!
   au FileType markdown nnoremap <buffer> <C-T> :MarkdownPreviewToggle<CR>
-"   au BufWinEnter *.md {
-"     MarkdownPreviewToggle
-"     echom "BufWinEnter"
-"   }
+  " au BufWinEnter *.md {
+  "   MarkdownPreviewToggle
+  "   echom "BufWinEnter"
+  " }
   " au BufWinLeave *.md {
   "   MarkdownPreviewToggle
   "   echom "BufWinLeave"
@@ -416,6 +416,9 @@ augroup END
 "
 let g:NERDTreeDirArrowCollapsible="-"
 let g:NERDTreeDirArrowExpandable="+"
+
+" vim-venter
+nnoremap <silent> <Leader>ve :VenterToggle<CR>
 
 " Plugins
 let s:vim_plug = s:scriptexists('plug.vim')
@@ -438,6 +441,7 @@ if s:vim_plug == 1
   Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
   Plug 'preservim/nerdtree'
+  Plug 'jmckiern/vim-venter'
   call plug#end()
 endif
 
