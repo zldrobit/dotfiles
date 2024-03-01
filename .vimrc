@@ -337,6 +337,7 @@ au FileType git setlocal foldmethod=syntax
 
 " gitgutter
 let g:gitgutter_enabled = 0
+" let g:gitgutter_preview_win_floating = 1
 nnoremap <silent> <Leader>ga :GitGutterToggle<CR>
 
 " FZF
@@ -419,6 +420,7 @@ let g:NERDTreeDirArrowExpandable="+"
 
 " vim-venter
 nnoremap <silent> <Leader>ve :VenterToggle<CR>
+let venter_map_only_window = 1
 
 " Plugins
 let s:vim_plug = s:scriptexists('plug.vim')
