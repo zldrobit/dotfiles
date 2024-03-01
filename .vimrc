@@ -148,7 +148,7 @@ if &shell =~ 'bash'
   execute "set <M-\\>=\e\\"
 endif
 nnoremap <M-\>  lgEldW
-inoremap <M-\>  <C-C>llgEldWi
+inoremap <M-\>  <C-[>llgEldWi
 
 " Readline style in command mode
 cnoremap <C-A> <Home>
@@ -162,9 +162,9 @@ vnoremap <Tab> mz>gv`z
 vnoremap <S-Tab> mz<gv`z
 
 " inline calculation
-nnoremap = :s/\s*=.*$//e<CR>:let @/ = ''<CR>^y$i<End> = <C-R>=<C-R>0<CR><C-C>
-vnoremap = :<C-U>'<,'>s/\%V\s*=.*$//e<CR>gvyi<End> = <C-R>=<C-R>0<CR><C-C>
-" :'<,'>s/=.*$//e<CR>:let @/ = ''<CR>^y$i<End> = <C-R>=<C-R>0<CR><C-C>
+nnoremap = :s/\s*=.*$//e<CR>:let @/ = ''<CR>^y$i<End> = <C-R>=<C-R>0<CR><C-[>
+vnoremap = :<C-U>'<,'>s/\%V\s*=.*$//e<CR>gvyi<End> = <C-R>=<C-R>0<CR><C-[>
+" :'<,'>s/=.*$//e<CR>:let @/ = ''<CR>^y$i<End> = <C-R>=<C-R>0<CR><C-[>
 
 " Vertical terminal
 cnoreabbrev <expr> vterm (getcmdtype() == ':' && getcmdline() =~ '^vterm$')? 'vert term' : 'vterm'
