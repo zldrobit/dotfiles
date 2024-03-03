@@ -10,10 +10,13 @@ set hlsearch
 set incsearch
 " set nomodeline
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+set updatetime=100
 set shiftround
 " set pastetoggle=<Leader>pa
 set bg=dark
 " set termguicolors
+set ignorecase
+set smartcase
 if has('gui_running')
 	colorscheme desert  " signcolumn is not highlighted
 	let g:lsp_diagnostics_enabled = 1
@@ -27,12 +30,15 @@ if has('gui_running')
   inoremap <C-S-V> <C-R>+
   cnoremap <C-S-V> <C-R>+
   nnoremenu 1.1 PopUp.Back <C-O>
+  nnoremenu 1.2 PopUp.Close\ Window <C-w>c
 else
 	let g:lsp_diagnostics_enabled = 1
 	let g:lsp_document_highlight_enabled = 1
 endif
-set guifont=Consolas:h11
-set guicursor+=a:blinkon0
+if has('win32') && has('gui_running')
+  set guifont=Consolas:h11
+  set guicursor+=a:blinkon0
+endif
 " set mouse=n
 
 function s:scriptexists(script)
@@ -316,6 +322,7 @@ function! s:ToggleGstatus() abort
 endfunction
 
 nnoremap <silent> <Leader>gg :call <SID>ToggleGstatus()<CR>
+nnoremap <silent> <Leader>gr :call fugitive#DidChange()<CR>
 
 " Show only vim-fugitive
 function! s:GitOnly() abort
@@ -332,6 +339,14 @@ augroup my-fugitive
   au FileType fugitive nnoremap <silent> m> :silent make post-git<CR><C-L>
 augroup END
 
+function s:reload_fugitive_index()
+  for w in getwininfo()
+    if bufname(w.bufnr) =~ "^fugitive://.*\.git//0/"
+      exec w.winnr . "windo e | wincmd p"
+    endif
+  endfor
+endfunction
+
 " fold :Gclog by files
 au FileType git setlocal foldmethod=syntax
 
@@ -339,6 +354,14 @@ au FileType git setlocal foldmethod=syntax
 let g:gitgutter_enabled = 0
 " let g:gitgutter_preview_win_floating = 1
 nnoremap <silent> <Leader>ga :GitGutterToggle<CR>
+
+augroup my-git-gutter
+  au!
+  if s:scriptexists('vim-fugitive')
+    autocmd User GitGutterStage nested call s:reload_fugitive_index()
+    " autocmd User GitGutterStage call fugitive#DidChange()
+  endif
+augroup END
 
 " FZF
 nnoremap <silent> <Leader>ff :FZF<CR>
@@ -377,6 +400,10 @@ nmap <C-_> <Plug>CommentaryLine
 vmap <C-_> <Plug>Commentary
 nmap <C-/> <Plug>CommentaryLine
 vmap <C-/> <Plug>Commentary
+if has('mac')
+  nmap <D-/> <Plug>CommentaryLine
+  vmap <D-/> <Plug>Commentary
+endif
 
 " vimwiki
 let g:vimwiki_list = [{'path': '~/vimwiki/',
@@ -434,6 +461,7 @@ if s:vim_plug == 1
 
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
+  Plug 'padde/jump.vim'
   " Plug 'ctrlpvim/ctrlp.vim'
   " Plug 'mileszs/ack.vim'  " , { 'tag': 'v1.0.9' }
   " Plug 'pechorin/any-jump.vim'
