@@ -476,7 +476,7 @@ if s:vim_plug == 1
   Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
   Plug 'preservim/nerdtree'
-  Plug 'zldrobit/vim-venter' , { 'branch' : 'devleop' }
+  Plug 'zldrobit/vim-venter' , { 'branch' : 'develop' }
   call plug#end()
 endif
 
