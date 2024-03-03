@@ -366,6 +366,11 @@ augroup END
 " FZF
 nnoremap <silent> <Leader>ff :FZF<CR>
 
+" CtrlP
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlPMixed'
+let g:ctrlp_show_hidden = 1
+
 " Python
 " autocmd! FileType python setlocal ts=8 sts=4 sw=4 expandtab
 
@@ -462,7 +467,7 @@ if s:vim_plug == 1
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'padde/jump.vim'
-  " Plug 'ctrlpvim/ctrlp.vim'
+  Plug 'ctrlpvim/ctrlp.vim'
   " Plug 'mileszs/ack.vim'  " , { 'tag': 'v1.0.9' }
   " Plug 'pechorin/any-jump.vim'
 	Plug 'prabirshrestha/vim-lsp'
@@ -471,7 +476,7 @@ if s:vim_plug == 1
   Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
   Plug 'preservim/nerdtree'
-  Plug 'jmckiern/vim-venter'
+  Plug 'zldrobit/vim-venter' , { 'branch' : 'devleop' }
   call plug#end()
 endif
 
