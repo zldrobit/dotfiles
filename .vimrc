@@ -118,8 +118,8 @@ nnoremap <silent> <Leader>ch :silent exe "e " . substitute(expand('%'), '\.\([ch
 nnoremap <silent> <Leader>cd :chdir %:p:h<CR>
 
 " New tab for the current window
-" nnoremap <silent> <C-W>t :tab split<CR>
-" tnoremap <silent> <C-W>t <C-W>:tab split<CR>
+nnoremap <silent> <C-W>r :tab split<CR>
+tnoremap <silent> <C-W>r <C-W>:tab split<CR>
 
 " Jump to terminal window
 function s:TerminalWindow()
@@ -168,8 +168,8 @@ vnoremap <Tab> mz>gv`z
 vnoremap <S-Tab> mz<gv`z
 
 " inline calculation
-nnoremap = :s/\s*=.*$//e<CR>:let @/ = ''<CR>^y$i<End> = <C-R>=<C-R>0<CR><C-[>
-vnoremap = :<C-U>'<,'>s/\%V\s*=.*$//e<CR>gvyi<End> = <C-R>=<C-R>0<CR><C-[>
+nnoremap <Leader>= :s/\s*=.*$//e<CR>:let @/ = ''<CR>^y$i<End> = <C-R>=<C-R>0<CR><C-[>
+vnoremap <Leader>= :<C-U>'<,'>s/\%V\s*=.*$//e<CR>gvyi<End> = <C-R>=<C-R>0<CR><C-[>
 " :'<,'>s/=.*$//e<CR>:let @/ = ''<CR>^y$i<End> = <C-R>=<C-R>0<CR><C-[>
 
 " Vertical terminal
@@ -370,6 +370,17 @@ nnoremap <silent> <Leader>ff :FZF<CR>
 let g:ctrlp_map = '<c-p>'
 let g:ctrlp_cmd = 'CtrlPMixed'
 let g:ctrlp_show_hidden = 1
+let g:ctrlp_match_current_file = 1
+let g:ctrlp_max_files = 0
+let g:ctrlp_working_path_mode = 'wra'
+" let g:ctrlp_user_command = 'ag --ignore={build,.git,.project,*.o,*.d,hw_1_5/*} %s -l --hidden -g ""'
+" let g:ctrlp_user_command = 'rg --files %s'
+
+" jump.vim
+if s:scriptexists('jump.vim')
+  cabbrev j J
+  cabbrev cd Cd
+endif
 
 " Python
 " autocmd! FileType python setlocal ts=8 sts=4 sw=4 expandtab
@@ -452,7 +463,7 @@ let g:NERDTreeDirArrowExpandable="+"
 
 " vim-venter
 nnoremap <silent> <Leader>ve :VenterToggle<CR>
-let venter_map_only_window = 1
+let g:venter_map_only_window = 1
 
 " Plugins
 let s:vim_plug = s:scriptexists('plug.vim')
