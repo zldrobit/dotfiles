@@ -118,8 +118,8 @@ nnoremap <silent> <Leader>ch :silent exe "e " . substitute(expand('%'), '\.\([ch
 nnoremap <silent> <Leader>cd :chdir %:p:h<CR>
 
 " New tab for the current window
-nnoremap <silent> <C-W>r :tab split<CR>
-tnoremap <silent> <C-W>r <C-W>:tab split<CR>
+nnoremap <silent> <C-W>t :tab split<CR>
+tnoremap <silent> <C-W>t <C-W>:tab split<CR>
 
 " Jump to terminal window
 function s:TerminalWindow()
@@ -130,7 +130,7 @@ function s:TerminalWindow()
   endfor
 endfunction
 command -nargs=0 TerminalWindow call s:TerminalWindow()
-nnoremap <silent> <C-W>t :TerminalWindow<CR>
+nnoremap <silent> <Leader>te :TerminalWindow<CR>
 
 " Zen mode
 nnoremap <silent> <Leader>ze :ZenMode<CR>
@@ -382,6 +382,13 @@ if s:scriptexists('jump.vim')
   cabbrev cd Cd
 endif
 
+" ctrlsf
+" context processing may be slow (e.g. > 1000 matches)
+nnoremap <Leader>rg <Plug>CtrlSFPrompt
+let g:ctrlsf_backend = 'rg'
+let g:ctrlsf_default_root = 'project+fw'
+let g:ctrlsf_search_mode = 'async'
+
 " Python
 " autocmd! FileType python setlocal ts=8 sts=4 sw=4 expandtab
 
@@ -419,6 +426,8 @@ vmap <C-/> <Plug>Commentary
 if has('mac')
   nmap <D-/> <Plug>CommentaryLine
   vmap <D-/> <Plug>Commentary
+  " maybe follow https://github.com/tpope/vim-commentary/issues/134#issuecomment-869453707
+  " imap <D-/> <C-O><Plug>CommentaryLine<C-O>`]
 endif
 
 " vimwiki
@@ -458,8 +467,43 @@ augroup END
 
 " NERDTree Directory Collapsible/Expandable Indication
 "
-let g:NERDTreeDirArrowCollapsible="-"
-let g:NERDTreeDirArrowExpandable="+"
+let NERDTreeHijackNetrw = 0
+let g:NERDTreeDirArrowCollapsible = "-"
+let g:NERDTreeDirArrowExpandable = "+"
+let NERDTreeMapCWD = "<Leader>cd"
+" let NERDTreeMouseMode = 2
+let g:NERDTreeChDirMode = 2
+
+augroup my-nerdtree
+  au!
+  " Exit Vim if NERDTree is the only window remaining in the only tab.
+  autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+  " Close the tab if NERDTree is the only window remaining in it.
+  autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+  " If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
+  " autocmd BufEnter * if winnr() == winnr('h') && bufname('#') =~ 'NERD_tree_tab_\d\+' && bufname('%') !~ 'NERD_tree_tab_\d\+' && winnr('$') > 1 |
+  "     \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | echom "Only one nerdtree " | endif
+
+  " TODO: Open file in empty window first
+  " Hack to open file other than in NERDTree
+  autocmd BufEnter * if winnr() == winnr('h') && bufname('#') =~ 'NERD_tree_tab_\d\+' && bufname('%') !~ 'NERD_tree_tab_\d\+' | 
+    \ buffer# | setl buftype= bufhidden= modified | execute 'drop '.bufname('#') | wincmd p | 
+    \ setl buftype=nofile bufhidden=hide nomodified | wincmd p | endif
+
+  " autocmd BufEnter * call s:OpenFileNotInNERDTree()
+  " function s:OpenFileNotInNERDTree()
+  "   if winnr() == winnr('h') && bufname('#') =~ 'NERD_tree_tab_\d\+' && bufname('%') !~ 'NERD_tree_tab_\d\+'
+  "     " let buf=bufnr()
+  "     buffer#
+  "     drop bufname('#')
+  "   endif
+  " endfunction
+augroup END
+
+" Mirror the NERDTree before showing it. This makes it the same on all tabs.
+nnoremap <C-T> :NERDTreeMirror<CR>:NERDTreeFocus<CR>
 
 " vim-venter
 nnoremap <silent> <Leader>ve :VenterToggle<CR>
@@ -473,14 +517,16 @@ if s:vim_plug == 1
   Plug 'tpope/vim-commentary'
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-repeat'
-	Plug 'airblade/vim-gitgutter'
+  Plug 'airblade/vim-gitgutter'
 
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'padde/jump.vim'
   Plug 'ctrlpvim/ctrlp.vim'
+  Plug 'dyng/ctrlsf.vim'
   " Plug 'mileszs/ack.vim'  " , { 'tag': 'v1.0.9' }
   " Plug 'pechorin/any-jump.vim'
+
 	Plug 'prabirshrestha/vim-lsp'
 	Plug 'mattn/vim-lsp-settings'
   Plug 'vimwiki/vimwiki'
@@ -546,7 +592,7 @@ function! s:on_lsp_buffer_enabled() abort
     nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
     nmap <buffer> gr <plug>(lsp-references)
     nmap <buffer> gi <plug>(lsp-implementation)
-    nmap <buffer> gt <plug>(lsp-type-definition)
+    " nmap <buffer> gt <plug>(lsp-type-definition)
     nmap <buffer> <leader>rn <plug>(lsp-rename)
     nmap <buffer> [g <plug>(lsp-previous-diagnostic)
     nmap <buffer> ]g <plug>(lsp-next-diagnostic)
