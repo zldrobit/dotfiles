@@ -41,6 +41,17 @@ if has('win32') && has('gui_running')
 endif
 " set mouse=n
 
+" ripgrep
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --no-heading
+endif
+
+function s:Ripgrep(args)
+  silent! cgetexpr systemlist('rg --vimgrep --no-heading ' . a:args) | copen
+endfunction
+command -nargs=* Ripgrep call s:Ripgrep(<q-args>)
+nnoremap <Leader>rg :Ripgrep 
+
 function s:scriptexists(script)
   " if has('unix')
 		" let scriptpath = $HOME . '/.vim/**/'
@@ -161,11 +172,15 @@ cnoremap <C-A> <Home>
 " cnoremap <C-K> <Home>
 
 " Tab Indent
-nnoremap <C-I> <C-I>
-nnoremap <Tab> mz>>`z
-nnoremap <S-Tab> mz<<`z
-vnoremap <Tab> mz>gv`z
-vnoremap <S-Tab> mz<gv`z
+" only gvim in Linux/Windows or vim in xterm
+" discriminates <C-I> and <Tab>
+if has('gui_running') && !has('mac')
+  nnoremap <C-I> <C-I>
+  nnoremap <Tab> mz>>`z
+  nnoremap <S-Tab> mz<<`z
+  vnoremap <Tab> mz>gv`z
+  vnoremap <S-Tab> mz<gv`z
+endif
 
 " inline calculation
 nnoremap <Leader>= :s/\s*=.*$//e<CR>:let @/ = ''<CR>^y$i<End> = <C-R>=<C-R>0<CR><C-[>
@@ -384,7 +399,7 @@ endif
 
 " ctrlsf
 " context processing may be slow (e.g. > 1000 matches)
-nnoremap <Leader>rg <Plug>CtrlSFPrompt
+nnoremap <Leader>sf <Plug>CtrlSFPrompt
 let g:ctrlsf_backend = 'rg'
 let g:ctrlsf_default_root = 'project+fw'
 let g:ctrlsf_search_mode = 'async'
@@ -503,7 +518,7 @@ augroup my-nerdtree
 augroup END
 
 " Mirror the NERDTree before showing it. This makes it the same on all tabs.
-nnoremap <C-T> :NERDTreeMirror<CR>:NERDTreeFocus<CR>
+nnoremap <C-N> :NERDTreeMirror<CR>:NERDTreeFocus<CR>
 
 " vim-venter
 nnoremap <silent> <Leader>ve :VenterToggle<CR>
