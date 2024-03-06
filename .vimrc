@@ -42,9 +42,9 @@ endif
 " set mouse=n
 
 " ripgrep
-if executable('rg')
-  set grepprg=rg\ --vimgrep\ --no-heading
-endif
+" if executable('rg')
+"   set grepprg=rg\ --vimgrep\ --no-heading
+" endif
 
 function s:Ripgrep(args)
   silent! cgetexpr systemlist('rg --vimgrep --no-heading ' . a:args) | copen
@@ -286,7 +286,7 @@ command -nargs=0 OnlyBuffer call s:OnlyBuffer()
 nnoremap <Leader>on :OnlyBuffer<CR>
 
 " set termwinkey=<C-X>
-set grepprg=grep\ -n\ --color=always
+" set grepprg=grep\ -n\ --color=always
 
 " Difftool and mergetool keymap
 " nnoremap <Leader>lo :diffget<Space>LOCAL<CR>
@@ -403,6 +403,9 @@ nnoremap <Leader>sf <Plug>CtrlSFPrompt
 let g:ctrlsf_backend = 'rg'
 let g:ctrlsf_default_root = 'project+fw'
 let g:ctrlsf_search_mode = 'async'
+let g:ctrlsf_parse_speed = 1000
+let g:ctrlsf_default_view_mode = 'compact'
+let g:ctrlsf_case_sensitive = 'yes'
 
 " Python
 " autocmd! FileType python setlocal ts=8 sts=4 sw=4 expandtab
