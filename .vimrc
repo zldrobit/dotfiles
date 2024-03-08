@@ -4,6 +4,7 @@ set ruler
 set showcmd
 set wildmode=longest:full,full
 set wildmenu
+set wildoptions+=pum
 set display=truncate
 set scrolloff=5
 set hlsearch
@@ -17,6 +18,10 @@ set bg=dark
 " set termguicolors
 set ignorecase
 set smartcase
+set sessionoptions-=blank
+if v:version >= 901
+  set jumpoptions=stack
+endif
 if has('gui_running')
 	colorscheme desert  " signcolumn is not highlighted
 	let g:lsp_diagnostics_enabled = 1
@@ -27,10 +32,15 @@ if has('gui_running')
   nnoremap <C-V> <C-V>
   " paste_cmd in paste.vim?
   vnoremap <C-S-V> "+gP
-  inoremap <C-S-V> <C-R>+
+  inoremap <C-S-V> <C-O>:set paste<CR><C-R>+<C-O>:set paste!<CR>
   cnoremap <C-S-V> <C-R>+
-  nnoremenu 1.1 PopUp.Back <C-O>
-  nnoremenu 1.2 PopUp.Close\ Window <C-w>c
+  tnoremap <C-S-V> <C-W>"+
+  nnoremenu 1.1 PopUp.Jump\ Back <C-O>
+  nnoremenu 1.2 PopUp.Jump\ Forward <C-I>
+  nnoremenu 1.3 PopUp.Close\ Window <C-W>c
+  nnoremenu 1.4 PopUp.Move\ to\ New\ Tab <C-W>T
+  nnoremenu 1.5 PopUp.Hover <Plug>(lsp-hover)
+  nnoremenu 1.6 PopUp.Go\ to\ Definition <Plug>(lsp-definition)
 else
 	let g:lsp_diagnostics_enabled = 1
 	let g:lsp_document_highlight_enabled = 1
@@ -47,10 +57,10 @@ endif
 " endif
 
 function s:Ripgrep(args)
-  silent! cgetexpr systemlist('rg --vimgrep --no-heading ' . a:args) | copen
+  silent! cgetexpr systemlist('rg --vimgrep --no-heading --hidden ' . a:args) | copen
 endfunction
 command -nargs=* Ripgrep call s:Ripgrep(<q-args>)
-nnoremap <Leader>rg :Ripgrep 
+nnoremap <Leader>rg :Ripgrep
 
 function s:scriptexists(script)
   " if has('unix')
@@ -107,16 +117,25 @@ nnoremap <F3> :cnext<CR>
 nnoremap <F4> :cprev<CR>
 
 " Edit vimrc
-function s:Vimrc(tab)
-  if a:tab
+function s:Vimrc(tab, force_new)
+  if eval(a:tab)
+    if !eval(a:force_new)
+      for t in getbufinfo()
+        if t.name =~# '.vimrc'
+          execute 'drop ' . t.name
+          return
+        endif
+      endfor
+    endif
     exe ':tabe ' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
   else
     exe ':vs ' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
   endif
 endfunction
-command -nargs=1 Vimrc call s:Vimrc(<args>)
-nnoremap <Leader>rc :Vimrc v:false<CR>
-nnoremap <Leader>Rc :Vimrc v:true<CR>
+command -nargs=+ Vimrc call s:Vimrc(<f-args>)
+nnoremap <Leader>rc :Vimrc v:false v:false<CR>
+nnoremap <Leader>Rc :Vimrc v:true v:false<CR>
+nnoremap <Leader>RC :Vimrc v:true v:true<CR>
 
 " Switch cursor status
 nnoremap <silent> <Leader>cu :set cursorline! cursorcolumn!<CR>
@@ -149,9 +168,9 @@ tnoremap <silent> <Leader>ze <C-W>:ZenMode<CR>
 function s:ZenMode()
   let ostal = &stal
   let &stal = 0
-  normal mz
+  normal! mz
   tab split
-  normal `z
+  normal! `z
   exec "au WinLeave <buffer> ++once let &stal = " .. ostal
 endfunction
 command -nargs=0 ZenMode call s:ZenMode()
@@ -296,6 +315,19 @@ nnoremap <Leader>on :OnlyBuffer<CR>
 nnoremap <backspace> g;
 nnoremap [8;2~ g,
 
+" Switch tabs with ctrk + #
+" maybe have to use Autohotkey
+nnoremap <Leader>1 1gt
+nnoremap <Leader>2 2gt
+nnoremap <Leader>3 3gt
+nnoremap <Leader>4 4gt
+nnoremap <Leader>5 5gt
+nnoremap <Leader>6 6gt
+nnoremap <Leader>7 7gt
+nnoremap <Leader>8 8gt
+nnoremap <Leader>9 9gt
+nnoremap <Leader>- gT
+
 " TODO: open on last edited position
 
 " Prepend numbers in lines
@@ -324,6 +356,44 @@ augroup PreviewQuickfix
   " TODO: May be polluted in using Git
   " au FileType fugitive nnoremap <buffer> m <CR><C-W>p
 augroup END
+
+" Change font size (from https://vi.stackexchange.com/questions/3093/how-can-i-change-the-font-size-in-gvim/3104#3104)
+if has("unix")
+    function! FontSizePlus ()
+      let l:gf_size_whole = matchstr(&guifont, '\( \)\@<=\d\+$')
+      let l:gf_size_whole = l:gf_size_whole + 1
+      let l:new_font_size = ' '.l:gf_size_whole
+      let &guifont = substitute(&guifont, ' \d\+$', l:new_font_size, '')
+    endfunction
+
+    function! FontSizeMinus ()
+      let l:gf_size_whole = matchstr(&guifont, '\( \)\@<=\d\+$')
+      let l:gf_size_whole = l:gf_size_whole - 1
+      let l:new_font_size = ' '.l:gf_size_whole
+      let &guifont = substitute(&guifont, ' \d\+$', l:new_font_size, '')
+    endfunction
+else
+    function! FontSizePlus ()
+      let l:gf_size_whole = matchstr(&guifont, '\(:h\)\@<=\d\+$')
+      let l:gf_size_whole = l:gf_size_whole + 1
+      let l:new_font_size = ':h'.l:gf_size_whole
+      let &guifont = substitute(&guifont, ':h\d\+$', l:new_font_size, '')
+    endfunction
+
+    function! FontSizeMinus ()
+      let l:gf_size_whole = matchstr(&guifont, '\(:h\)\@<=\d\+$')
+      let l:gf_size_whole = l:gf_size_whole - 1
+      let l:new_font_size = ':h'.l:gf_size_whole
+      let &guifont = substitute(&guifont, ':h\d\+$', l:new_font_size, '')
+    endfunction
+endif
+
+if has("gui_running")
+    nmap <S-F12> :call FontSizeMinus()<CR>
+    nmap <C-ScrollWheelDown> :call FontSizeMinus()<CR>
+    nmap <F12> :call FontSizePlus()<CR>
+    nmap <C-ScrollWheelUp> :call FontSizePlus()<CR>
+endif
 
 " Toggle vim-fugitive's Git status window
 function! s:ToggleGstatus() abort
@@ -356,7 +426,7 @@ augroup END
 
 function s:reload_fugitive_index()
   for w in getwininfo()
-    if bufname(w.bufnr) =~ "^fugitive://.*\.git//0/"
+    if bufname(w.bufnr) =~ '^fugitive:[\\/][\\/].*\.git[\\/][\\/]0[\\/]'
       exec w.winnr . "windo e | wincmd p"
     endif
   endfor
@@ -489,8 +559,10 @@ let NERDTreeHijackNetrw = 0
 let g:NERDTreeDirArrowCollapsible = "-"
 let g:NERDTreeDirArrowExpandable = "+"
 let NERDTreeMapCWD = "<Leader>cd"
+let NERDTreeMapQuit = ""
 " let NERDTreeMouseMode = 2
 let g:NERDTreeChDirMode = 2
+cabbrev ntf NERDTreeFind
 
 augroup my-nerdtree
   au!
@@ -506,9 +578,11 @@ augroup my-nerdtree
 
   " TODO: Open file in empty window first
   " Hack to open file other than in NERDTree
-  autocmd BufEnter * if winnr() == winnr('h') && bufname('#') =~ 'NERD_tree_tab_\d\+' && bufname('%') !~ 'NERD_tree_tab_\d\+' | 
-    \ buffer# | setl buftype= bufhidden= modified | execute 'drop '.bufname('#') | wincmd p | 
-    \ setl buftype=nofile bufhidden=hide nomodified | wincmd p | endif
+  " autocmd BufEnter * if winnr() == winnr('h') && bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' |
+  "   \ buffer# | setl buftype= bufhidden= modified | execute 'drop '.bufname('#') | wincmd p |
+  "   \ setl buftype=nofile bufhidden=hide nomodified | wincmd p | endif
+
+  " autocmd Syntax nerdtree ++once call s:RecreateNERDTree()
 
   " autocmd BufEnter * call s:OpenFileNotInNERDTree()
   " function s:OpenFileNotInNERDTree()
@@ -520,8 +594,29 @@ augroup my-nerdtree
   " endfunction
 augroup END
 
+" function s:RecreateNERDTree()
+"   " if getline(1, '$') == [''] 
+"   echom "execute RecreateNERDTree"
+"   " breakadd here
+"   throw "a breakpoint"
+"   if exists('SessionLoad')
+"     echom "execute RecreateNERDTree"
+"     let l:view = winsaveview()
+"     noautocmd bdelete | NERDTreeMirror | NERDTreeFocus
+"     " call winrestview(l:view)
+"   endif
+" endfunction
+
 " Mirror the NERDTree before showing it. This makes it the same on all tabs.
-nnoremap <C-N> :NERDTreeMirror<CR>:NERDTreeFocus<CR>
+nnoremap <F7> :MyNERDTreeToggle<CR>
+command -narg=0 MyNERDTreeToggle 
+  \ NERDTreeToggleVCS |
+  \ if &filetype ==# 'nerdtree' |
+  \   wincmd p |
+  \ endif
+
+" Tagbar
+nmap <F8> :TagbarToggle<CR>
 
 " vim-venter
 nnoremap <silent> <Leader>ve :VenterToggle<CR>
@@ -539,7 +634,9 @@ if s:vim_plug == 1
 
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
-  Plug 'padde/jump.vim'
+  if !has('win32')
+    Plug 'padde/jump.vim'
+  endif
   Plug 'ctrlpvim/ctrlp.vim'
   Plug 'dyng/ctrlsf.vim'
   " Plug 'mileszs/ack.vim'  " , { 'tag': 'v1.0.9' }
@@ -551,6 +648,7 @@ if s:vim_plug == 1
   Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
   Plug 'preservim/nerdtree'
+  Plug 'majutsushi/tagbar'
   Plug 'zldrobit/vim-venter' , { 'branch' : 'develop' }
   call plug#end()
 endif
@@ -606,6 +704,7 @@ function! s:on_lsp_buffer_enabled() abort
 		if g:lsp_diagnostics_enabled == 1 | setlocal signcolumn=yes | endif
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> gd <plug>(lsp-definition)
+    nmap <2-LeftMouse> <plug>(lsp-definition)
     nmap <buffer> gs <plug>(lsp-document-symbol-search)
     nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
     nmap <buffer> gr <plug>(lsp-references)
