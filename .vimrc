@@ -40,7 +40,10 @@ if has('gui_running')
   nnoremenu 1.3 PopUp.Close\ Window <C-W>c
   nnoremenu 1.4 PopUp.Move\ to\ New\ Tab <C-W>T
   nnoremenu 1.5 PopUp.Hover <Plug>(lsp-hover)
-  nnoremenu 1.6 PopUp.Go\ to\ Definition <Plug>(lsp-definition)
+  " nnoremenu 1.6 PopUp.Go\ to\ Definition <Plug>(lsp-definition)
+  nmenu 1.6 PopUp.Window\ Yank <C-W>r
+  nmenu 1.7 PopUp.Window\ Put <C-W>i
+  nmenu 1.8 PopUp.Window\ Exchange <C-W>x
 else
 	let g:lsp_diagnostics_enabled = 1
 	let g:lsp_document_highlight_enabled = 1
@@ -228,9 +231,9 @@ nnoremap <Leader>Re :%s/\<<C-R><C-W>/>\/gI<Left><Left><Left>
 vnoremap <Leader>Re :%s/\<<C-R><C-W>/>\/gI<Left><Left><Left>
 
 " List chars
-let s:listchars = &listchars
 function s:ToggleListChars()
 	if &list == 0
+    let s:listchars = &listchars
 		let &listchars = "tab:>-,trail:-"
 		set list
 	else
@@ -241,6 +244,23 @@ endfunction
 command -nargs=0 ToggleListChars call s:ToggleListChars()
 nnoremap <silent> <Leader>li :ToggleListChars <CR>
 
+" Show indent
+" https://www.reddit.com/r/vim/comments/1b74q0k/comment/kthdmkp/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+let s:showindent = 0
+function s:ShowIndent()
+	if s:showindent == 0
+    let s:showindent = 1
+    let s:listchars = &listchars
+    exe 'setlocal listchars=tab:\│\ ,multispace:\│' . repeat('\ ', &sw - 1)
+		set list
+	else
+    let s:showindent = 0
+		let &listchars = s:listchars
+		set nolist
+	endif
+endfunction
+command -nargs=0 ShowIndent call s:ShowIndent()
+nnoremap <silent> <Leader>si :ShowIndent <CR>
 
 " sudo overwrite
 cabbrev w!! w !sudo tee % >/dev/null 2>&1
@@ -356,6 +376,11 @@ augroup PreviewQuickfix
   " TODO: May be polluted in using Git
   " au FileType fugitive nnoremap <buffer> m <CR><C-W>p
 augroup END
+
+" Yank, insert, and switch a buffer in a window
+nnoremap <silent> <C-W>r :let @z=bufnr()<CR>:let @y=winnr()<CR>
+nnoremap <silent> <expr> <C-W>i ":" . @z . "buf<CR>"
+nnoremap <silent> <expr> <C-W>s ":let @x=" . bufnr() . "<CR>:" . @z . "buf<CR>:" . @y . "wincmd w<CR>:" . @x . "buf<CR>:wincmd p<CR>"
 
 " Change font size (from https://vi.stackexchange.com/questions/3093/how-can-i-change-the-font-size-in-gvim/3104#3104)
 if has("unix")
@@ -531,8 +556,8 @@ let g:vimwiki_markdown_link_ext = 1
 if s:scriptexists('vimwiki')
   augroup my-vimwiki
     au!
-    au FileType *vimwiki* unmenu PopUp.Back
-    au FileType *vimwiki* nnoremenu 1.1 PopUp.Back <Plug>VimwikiGoBackLink
+    au FileType *vimwiki* unmenu PopUp.Jump\ Back
+    au FileType *vimwiki* nnoremenu 1.1 PopUp.Jump\ Back <Plug>VimwikiGoBackLink
     au FileType *vimwiki* nnoremap <buffer> <C-LeftMouse> <LeftMouse><Plug>VimwikiFollowLink
     au FileType *vimwiki* nnoremap <buffer> <2-LeftMouse> :call vimwiki#base#follow_link('nosplit', 0, 1, "\\<2-LeftMouse>")<CR>
   augroup END
@@ -542,7 +567,7 @@ endif
 let g:mkdp_auto_start = 0
 augroup my-markdown-preview
   au!
-  au FileType markdown nnoremap <buffer> <C-T> :MarkdownPreviewToggle<CR>
+  au FileType markdown nnoremap <buffer> <C-A> :MarkdownPreviewToggle<CR>
   " au BufWinEnter *.md {
   "   MarkdownPreviewToggle
   "   echom "BufWinEnter"
@@ -562,7 +587,8 @@ let NERDTreeMapCWD = "<Leader>cd"
 let NERDTreeMapQuit = ""
 " let NERDTreeMouseMode = 2
 let g:NERDTreeChDirMode = 2
-cabbrev ntf NERDTreeFind
+" cabbrev ntf NERDTreeFind
+nnoremap <silent> <Leader>nf :NERDTreeFind<CR>
 
 augroup my-nerdtree
   au!
