@@ -346,7 +346,7 @@ nnoremap <Leader>6 6gt
 nnoremap <Leader>7 7gt
 nnoremap <Leader>8 8gt
 nnoremap <Leader>9 9gt
-nnoremap <Leader>- gT
+nnoremap <Leader>- g<Tab>
 
 " TODO: open on last edited position
 
@@ -633,8 +633,8 @@ augroup END
 "   endif
 " endfunction
 
-" Mirror the NERDTree before showing it. This makes it the same on all tabs.
-nnoremap <F7> :MyNERDTreeToggle<CR>
+" nnoremap <F7> :MyNERDTreeToggle<CR>
+nnoremap <Leader>ne :MyNERDTreeToggle<CR>
 command -narg=0 MyNERDTreeToggle 
   \ NERDTreeToggleVCS |
   \ if &filetype ==# 'nerdtree' |
@@ -642,7 +642,9 @@ command -narg=0 MyNERDTreeToggle
   \ endif
 
 " Tagbar
-nmap <F8> :TagbarToggle<CR>
+" nnoremap <F8> :TagbarToggle<CR>
+nnoremap <Leader>ta :TagbarToggle<CR>
+nnoremap <Leader>nt :MyNERDTreeToggle<CR>:TagbarToggle<CR>
 
 " vim-venter
 nnoremap <silent> <Leader>ve :VenterToggle<CR>
@@ -670,6 +672,7 @@ if s:vim_plug == 1
 
 	Plug 'prabirshrestha/vim-lsp'
 	Plug 'mattn/vim-lsp-settings'
+  Plug 'puremourning/vimspector'
   Plug 'vimwiki/vimwiki'
   Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
@@ -754,6 +757,90 @@ augroup lsp_install
     " call s:on_lsp_buffer_enabled only for languages that has the server registered.
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
+
+let g:vimspector_base_dir='/home/fjc/.vim/plugged/vimspector'
+
+let g:vimspector_enable_mappings = 'HUMAN'
+
+let g:vimspector_adapters = {
+\   "python-remote-docker": {
+\     "variables": {
+\       "port": "8765"
+\     },
+\     "port": "${port}",
+\     "launch": {
+\       "remote": {
+\         "container": "${ContainerID}",
+\         "runCommand": [
+\           "python3", "-m", "debugpy", "--listen", "0.0.0.0:${port}",
+\                                       "--wait-for-client",
+\                                       "%CMD%"
+\         ]
+\       },
+\       "delay": "1000m"
+\     }
+\   },
+\}
+
+" debugpy does not support stopOnEntry in attach mode
+let g:vimspector_configurations = {
+\   "Python": {
+\     "adapter": "debugpy",
+\     "filetypes": [ "python" ],
+\     "type": "python",
+\     "default": v:false,
+\     "configuration": {
+\       "request": "launch",
+\       "program": "${file}",
+\       "stopOnEntry": v:true,
+\       "cwd": "${workspaceRoot}", 
+\       "console": "integratedTerminal"
+\     },
+\    "breakpoints": {
+\      "exception": {
+\        "raised": "Y",
+\        "uncaught": "",
+\        "userUnhandled": ""
+\      }
+\    }
+\   },
+\   "Python-docker-attach": {
+\     "adapter": "python-remote-docker",
+\     "type": "python",
+\     "remote-cmdLine": [ "${RemoteRoot}/${fileBasename}" ],
+\     "remote-request": "launch",
+\     "configuration": {
+\       "request": "attach",
+\       "pathMappings": [
+\         {
+\           "localRoot": "${workspaceRoot}",
+\           "remoteRoot": "${RemoteRoot}"
+\         }
+\       ]
+\     },
+\   },
+\ }
+
+" Change signs
+sign define vimspectorBP text=o             texthl=WarningMsg
+sign define vimspectorBPCond text=o?        texthl=WarningMsg
+sign define vimspectorBPLog text=!!         texthl=SpellRare
+sign define vimspectorBPDisabled text=o!    texthl=LineNr
+sign define vimspectorPC text=\ >           texthl=MatchParen
+sign define vimspectorPCBP text=o>          texthl=MatchParen
+sign define vimspectorCurrentThread text=>  texthl=MatchParen
+sign define vimspectorCurrentFrame text=>   texthl=Special
+
+
+" for normal mode - the word under the cursor
+nmap <Leader>di <Plug>VimspectorBalloonEval
+" for visual mode, the visually selected text
+xmap <Leader>di <Plug>VimspectorBalloonEval
+
+nmap <LocalLeader><F11> <Plug>VimspectorUpFrame
+nmap <LocalLeader><F12> <Plug>VimspectorDownFrame
+nmap <LocalLeader>B     <Plug>VimspectorBreakpoints
+nmap <LocalLeader>D     <Plug>VimspectorDisassemble
 
 function! Tapi_Drop(bufnum, arglist)
 	let l:fullpath = a:arglist[0]
