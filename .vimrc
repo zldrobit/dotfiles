@@ -19,6 +19,7 @@ set bg=dark
 set ignorecase
 set smartcase
 set sessionoptions-=blank
+set isfname-==
 if v:version >= 901
   set jumpoptions=stack
 endif
@@ -45,7 +46,7 @@ if has('gui_running')
   nmenu 1.7 PopUp.Window\ Put <C-W>i
   nmenu 1.8 PopUp.Window\ Exchange <C-W>x
 else
-	let g:lsp_diagnostics_enabled = 1
+	let g:lsp_diagnostics_enabled = 0
 	let g:lsp_document_highlight_enabled = 1
 endif
 if has('win32') && has('gui_running')
@@ -60,10 +61,13 @@ endif
 " endif
 
 function s:Ripgrep(args)
+  let oerrorformat = &errorformat
+  set errorformat=%f:%l:%c:%m
   silent! cgetexpr systemlist('rg --vimgrep --no-heading --hidden ' . a:args) | copen
+  let &errorformat = oerrorformat
 endfunction
 command -nargs=* Ripgrep call s:Ripgrep(<q-args>)
-nnoremap <Leader>rg :Ripgrep
+nnoremap <Leader>rg :Ripgrep -g '*.py' 
 
 function s:scriptexists(script)
   " if has('unix')
@@ -168,13 +172,25 @@ nnoremap <silent> <Leader>te :TerminalWindow<CR>
 " Zen mode
 nnoremap <silent> <Leader>ze :ZenMode<CR>
 tnoremap <silent> <Leader>ze <C-W>:ZenMode<CR>
+" function s:ZenMode()
+"   let ostal = &stal
+"   let &stal = 0
+"   normal! mz
+"   tab split
+"   normal! `z
+"   exec "au WinLeave <buffer> ++once let &stal = " .. ostal
+" endfunction
+let s:is_zenmode = 0
 function s:ZenMode()
-  let ostal = &stal
-  let &stal = 0
-  normal! mz
-  tab split
-  normal! `z
-  exec "au WinLeave <buffer> ++once let &stal = " .. ostal
+  if !s:is_zenmode
+    let s:winrest_cmd = winrestcmd()
+    wincmd _
+    wincmd |
+    let s:is_zenmode = 1
+  else
+    execute s:winrest_cmd
+    let s:is_zenmode = 0
+  endif
 endfunction
 command -nargs=0 ZenMode call s:ZenMode()
 
@@ -314,8 +330,8 @@ function s:GitSearch(pat)
   exe 'cex[] | vimgrep /' . a:pat . '/j `git ls-files` | cw'
 endfunction
 command -nargs=1 GitSearch call s:GitSearch(<q-args>)
-nnoremap <Leader>gs :GitSearch <C-R><C-W><CR>
-vnoremap <Leader>gs :<C-U>GitSearch <C-R><C-W><CR>
+" nnoremap <Leader>gs :GitSearch <C-R><C-W><CR>
+" vnoremap <Leader>gs :<C-U>GitSearch <C-R><C-W><CR>
 
 " Remove all but the current buffer
 function s:OnlyBuffer()
@@ -464,6 +480,10 @@ au FileType git setlocal foldmethod=syntax
 let g:gitgutter_enabled = 0
 " let g:gitgutter_preview_win_floating = 1
 nnoremap <silent> <Leader>ga :GitGutterToggle<CR>
+" nmap ghp <Plug>(GitGutterPreviewHunk)
+nmap <Leader>gs <Plug>(GitGutterStageHunk)
+nmap <Leader>gu <Plug>(GitGutterUndoHunk)
+nmap <Leader>gp <Plug>(GitGutterPreviewHunk)
 
 augroup my-git-gutter
   au!
@@ -737,7 +757,7 @@ function! s:on_lsp_buffer_enabled() abort
     nmap <buffer> gs <plug>(lsp-document-symbol-search)
     nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
     nmap <buffer> gr <plug>(lsp-references)
-    nmap <buffer> gi <plug>(lsp-implementation)
+    " nmap <buffer> gi <plug>(lsp-implementation)
     " nmap <buffer> gt <plug>(lsp-type-definition)
     nmap <buffer> <leader>rn <plug>(lsp-rename)
     nmap <buffer> [g <plug>(lsp-previous-diagnostic)
@@ -758,7 +778,7 @@ augroup lsp_install
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
 
-let g:vimspector_base_dir='/home/fjc/.vim/plugged/vimspector'
+" let g:vimspector_base_dir='/home/fjc/.vim/plugged/vimspector'
 
 let g:vimspector_enable_mappings = 'HUMAN'
 
@@ -783,11 +803,11 @@ let g:vimspector_adapters = {
 \}
 
 " debugpy does not support stopOnEntry in attach mode
+" create .vimspector.json ('{}') in project dir to setup ${workspaceRoot}
 let g:vimspector_configurations = {
 \   "Python": {
 \     "adapter": "debugpy",
 \     "filetypes": [ "python" ],
-\     "type": "python",
 \     "default": v:false,
 \     "configuration": {
 \       "request": "launch",
@@ -806,7 +826,6 @@ let g:vimspector_configurations = {
 \   },
 \   "Python-docker-attach": {
 \     "adapter": "python-remote-docker",
-\     "type": "python",
 \     "remote-cmdLine": [ "${RemoteRoot}/${fileBasename}" ],
 \     "remote-request": "launch",
 \     "configuration": {
@@ -818,7 +837,33 @@ let g:vimspector_configurations = {
 \         }
 \       ]
 \     },
+\    "breakpoints": {
+\      "exception": {
+\        "raised": "N",
+\        "uncaught": "",
+\        "userUnhandled": ""
+\      }
+\    }
 \   },
+\   "Python-tcp-attach": {
+\     "adapter": "multi-session",
+\     "configuration": {
+\       "request": "attach",
+\       "pathMappings": [
+\         {
+\           "localRoot": "${workspaceRoot}",
+\           "remoteRoot": "${RemoteRoot}"
+\         }
+\       ]
+\     },
+\     "breakpoints": {
+\       "exception": {
+\         "raised": "N",
+\         "uncaught": "",
+\         "userUnhandled": ""
+\       }
+\     }
+\   } 
 \ }
 
 " Change signs
@@ -841,6 +886,7 @@ nmap <LocalLeader><F11> <Plug>VimspectorUpFrame
 nmap <LocalLeader><F12> <Plug>VimspectorDownFrame
 nmap <LocalLeader>B     <Plug>VimspectorBreakpoints
 nmap <LocalLeader>D     <Plug>VimspectorDisassemble
+nnoremap <silent> <Leader>vr :call vimspector#Reset()<CR>
 
 function! Tapi_Drop(bufnum, arglist)
 	let l:fullpath = a:arglist[0]
