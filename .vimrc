@@ -20,6 +20,7 @@ set ignorecase
 set smartcase
 set sessionoptions-=blank
 set isfname-==
+set noequalalways
 if v:version >= 901
   set jumpoptions=stack
 endif
