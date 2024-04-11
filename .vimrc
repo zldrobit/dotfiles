@@ -4,7 +4,6 @@ set ruler
 set showcmd
 set wildmode=longest:full,full
 set wildmenu
-set wildoptions+=pum
 set display=truncate
 set scrolloff=5
 set hlsearch
@@ -22,6 +21,7 @@ set sessionoptions-=blank
 set isfname-==
 set noequalalways
 if v:version >= 901
+  set wildoptions+=pum
   set jumpoptions=stack
 endif
 if has('gui_running')
