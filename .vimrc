@@ -20,6 +20,7 @@ set smartcase
 set sessionoptions-=blank
 set isfname-==
 set noequalalways
+set nowrapscan
 if v:version >= 901
   set wildoptions+=pum
   set jumpoptions=stack
@@ -300,6 +301,17 @@ function s:Indent(...)
   endif
 endfunction
 command -nargs=? IndentWithSpaces call s:Indent(<args>)
+
+" from visual star search plugin
+xnoremap * :<C-U>call <SID>VSetSearch('/')<CR>/<C-R>=@/<CR><CR>
+xnoremap # :<C-U>call <SID>VSetSearch('?')<CR>?<C-R>=@/<CR><CR>
+
+function! s:VSetSearch(cmdtype)
+  let temp = @s
+  norm! gv"sy
+  let @/ = '\V' . substitute(escape(@s, a:cmdtype.'\'), '\n', '\\n', 'g')
+  let @s = temp
+endfunction
 
 " Search in current buffers
 function! s:Search(pat)
