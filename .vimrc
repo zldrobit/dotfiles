@@ -69,7 +69,7 @@ function s:Ripgrep(args)
   let &errorformat = oerrorformat
 endfunction
 command -nargs=* Ripgrep call s:Ripgrep(<q-args>)
-nnoremap <Leader>rg :Ripgrep -g '*.py' 
+nnoremap <Leader>rg :Ripgrep -g "*.py" 
 
 function s:scriptexists(script)
   " if has('unix')
