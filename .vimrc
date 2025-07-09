@@ -26,9 +26,16 @@ if v:version >= 901
   set jumpoptions=stack
 endif
 if has('gui_running')
-	colorscheme desert  " signcolumn is not highlighted
-	let g:lsp_diagnostics_enabled = 1
-	let g:lsp_document_highlight_enabled = 1
+  set guioptions-=a
+  set guioptions-=l
+  set guioptions-=L
+  set guioptions-=T
+  set guioptions+=c
+  set guicursor+=a:blinkon0
+  set mousemodel=popup
+  colorscheme desert  " signcolumn is not highlighted
+  let g:lsp_diagnostics_enabled = 0
+  let g:lsp_document_highlight_enabled = 1
   " set clipboard=unnamed
   vnoremap <C-S-C> "+y
   nnoremap <C-S-V> "+gP
@@ -48,12 +55,15 @@ if has('gui_running')
   nmenu 1.7 PopUp.Window\ Put <C-W>i
   nmenu 1.8 PopUp.Window\ Exchange <C-W>x
 else
-	let g:lsp_diagnostics_enabled = 0
-	let g:lsp_document_highlight_enabled = 1
+  let g:lsp_diagnostics_enabled = 0
+  let g:lsp_document_highlight_enabled = 1
 endif
-if has('win32') && has('gui_running')
-  set guifont=Consolas:h11
-  set guicursor+=a:blinkon0
+if has('gui_running')
+  if has('win32')
+    set guifont=Consolas:h11
+  else
+    set guifont=Monospace\ 11
+  endif
 endif
 " set mouse=n
 
@@ -73,12 +83,12 @@ nnoremap <Leader>rg :Ripgrep -g "*.py"
 
 function s:scriptexists(script)
   " if has('unix')
-		" let scriptpath = $HOME . '/.vim/**/'
+    " let scriptpath = $HOME . '/.vim/**/'
   " elseif has('win32')
-		" let scriptpath = $USERPROFILE . '/vimfiles/**/'
+    " let scriptpath = $USERPROFILE . '/vimfiles/**/'
   " endif
-	let scriptpath = split(&rtp, ',')[0]
-	let res = glob(scriptpath . '/**/' . a:script)
+  let scriptpath = split(&rtp, ',')[0]
+  let res = glob(scriptpath . '/**/' . a:script)
   if len(res) > 0
     return 1
   endif
@@ -250,14 +260,14 @@ vnoremap <Leader>Re :%s/\<<C-R><C-W>/>\/gI<Left><Left><Left>
 
 " List chars
 function s:ToggleListChars()
-	if &list == 0
+  if &list == 0
     let s:listchars = &listchars
-		let &listchars = "tab:>-,trail:-"
-		set list
-	else
-		let &listchars = s:listchars
-		set nolist
-	endif
+    let &listchars = "tab:>-,trail:-"
+    set list
+  else
+    let &listchars = s:listchars
+    set nolist
+  endif
 endfunction
 command -nargs=0 ToggleListChars call s:ToggleListChars()
 nnoremap <silent> <Leader>li :ToggleListChars <CR>
@@ -266,16 +276,16 @@ nnoremap <silent> <Leader>li :ToggleListChars <CR>
 " https://www.reddit.com/r/vim/comments/1b74q0k/comment/kthdmkp/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
 let s:showindent = 0
 function s:ShowIndent()
-	if s:showindent == 0
+  if s:showindent == 0
     let s:showindent = 1
     let s:listchars = &listchars
     exe 'setlocal listchars=tab:\│\ ,multispace:\│' . repeat('\ ', &sw - 1)
-		set list
-	else
+    set list
+  else
     let s:showindent = 0
-		let &listchars = s:listchars
-		set nolist
-	endif
+    let &listchars = s:listchars
+    set nolist
+  endif
 endfunction
 command -nargs=0 ShowIndent call s:ShowIndent()
 nnoremap <silent> <Leader>si :ShowIndent <CR>
@@ -418,6 +428,7 @@ if has("unix")
       let l:gf_size_whole = l:gf_size_whole + 1
       let l:new_font_size = ' '.l:gf_size_whole
       let &guifont = substitute(&guifont, ' \d\+$', l:new_font_size, '')
+      call timer_start(0, {->execute("echo &guifont", "")})
     endfunction
 
     function! FontSizeMinus ()
@@ -425,6 +436,7 @@ if has("unix")
       let l:gf_size_whole = l:gf_size_whole - 1
       let l:new_font_size = ' '.l:gf_size_whole
       let &guifont = substitute(&guifont, ' \d\+$', l:new_font_size, '')
+      call timer_start(0, {->execute("echo &guifont", "")})
     endfunction
 else
     function! FontSizePlus ()
@@ -432,6 +444,7 @@ else
       let l:gf_size_whole = l:gf_size_whole + 1
       let l:new_font_size = ':h'.l:gf_size_whole
       let &guifont = substitute(&guifont, ':h\d\+$', l:new_font_size, '')
+      call timer_start(0, {->execute("echo &guifont", "")})
     endfunction
 
     function! FontSizeMinus ()
@@ -439,6 +452,7 @@ else
       let l:gf_size_whole = l:gf_size_whole - 1
       let l:new_font_size = ':h'.l:gf_size_whole
       let &guifont = substitute(&guifont, ':h\d\+$', l:new_font_size, '')
+      call timer_start(0, {->execute("echo &guifont", "")})
     endfunction
 endif
 
@@ -490,7 +504,7 @@ endfunction
 au FileType git setlocal foldmethod=syntax
 
 " gitgutter
-let g:gitgutter_enabled = 0
+let g:gitgutter_enabled = 1
 " let g:gitgutter_preview_win_floating = 1
 nnoremap <silent> <Leader>ga :GitGutterToggle<CR>
 " nmap ghp <Plug>(GitGutterPreviewHunk)
@@ -623,6 +637,14 @@ let g:NERDTreeChDirMode = 2
 " cabbrev ntf NERDTreeFind
 nnoremap <silent> <Leader>nf :NERDTreeFind<CR>
 
+" Tarbar
+"
+
+let s:ctags_bin='/usr/local/bin/uctags'  " for FreeBSD Universal Ctags
+if filereadable(s:ctags_bin)
+  let g:tagbar_ctags_bin=s:ctags_bin
+endif
+
 augroup my-nerdtree
   au!
   " Exit Vim if NERDTree is the only window remaining in the only tab.
@@ -703,8 +725,8 @@ if s:vim_plug == 1
   " Plug 'mileszs/ack.vim'  " , { 'tag': 'v1.0.9' }
   " Plug 'pechorin/any-jump.vim'
 
-	Plug 'prabirshrestha/vim-lsp'
-	Plug 'mattn/vim-lsp-settings'
+  Plug 'prabirshrestha/vim-lsp'
+  Plug 'mattn/vim-lsp-settings'
   Plug 'puremourning/vimspector'
   Plug 'vimwiki/vimwiki'
   Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
@@ -763,7 +785,7 @@ let g:lsp_settings = {
 
 function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
-		if g:lsp_diagnostics_enabled == 1 | setlocal signcolumn=yes | endif
+    if g:lsp_diagnostics_enabled == 1 | setlocal signcolumn=yes | endif
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> gd <plug>(lsp-definition)
     nmap <2-LeftMouse> <plug>(lsp-definition)
@@ -902,8 +924,8 @@ nmap <LocalLeader>D     <Plug>VimspectorDisassemble
 nnoremap <silent> <Leader>vr :call vimspector#Reset()<CR>
 
 function! Tapi_Drop(bufnum, arglist)
-	let l:fullpath = a:arglist[0]
-	execute "drop " .. l:fullpath
+  let l:fullpath = a:arglist[0]
+  execute "drop " .. l:fullpath
 endfunction
 
 " Using bash completion for Gclog
