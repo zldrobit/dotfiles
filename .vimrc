@@ -26,9 +26,9 @@ if v:version >= 901
   set jumpoptions=stack
 endif
 if has('gui_running')
-	colorscheme desert  " signcolumn is not highlighted
-	let g:lsp_diagnostics_enabled = 1
-	let g:lsp_document_highlight_enabled = 1
+  colorscheme desert  " signcolumn is not highlighted
+  let g:lsp_diagnostics_enabled = 1
+  let g:lsp_document_highlight_enabled = 1
   " set clipboard=unnamed
   vnoremap <C-S-C> "+y
   nnoremap <C-S-V> "+gP
@@ -675,9 +675,77 @@ command -narg=0 MyNERDTreeToggle
   \ endif
 
 " Tagbar
+let g:tagbar_silent = 1
 " nnoremap <F8> :TagbarToggle<CR>
 nnoremap <Leader>ta :TagbarToggle<CR>
 nnoremap <Leader>nt :MyNERDTreeToggle<CR>:TagbarToggle<CR>
+
+" Diff between two commits
+command! -nargs=* -bang DiffHistory call s:view_git_history(<bang>0, <f-args>)
+
+function! s:view_git_history(workspace, ...) abort
+  let s:diff_workspace = a:workspace
+  if a:0 == 0
+    Git difftool --name-only @ !
+  elseif a:0 == 1
+    exec 'Git difftool --name-only @' a:1
+  elseif a:0 == 2
+    exec 'Git difftool --name-only' a:1 a:2
+  endif
+  call s:diff_current_quickfix_entry()
+  " Bind <CR> for current quickfix window to properly set up diff split layout after selecting an item
+  " There's probably a better way to map this without changing the window
+  copen
+  nnoremap <buffer> <CR> <CR><BAR>:call <sid>diff_current_quickfix_entry()<CR>
+  wincmd p
+endfunction
+
+function s:diff_current_quickfix_entry() abort
+  let l:curwin = winnr()
+  for window in getwininfo()
+    let l:winnr = win_id2win(window.winid)
+    if window.winnr !=? l:curwin && (bufname(window.bufnr) =~? '^fugitive:' || getwinvar(l:winnr, '&diff') ==? 1)
+      exe 'bdelete' window.bufnr
+    endif
+  endfor
+  cc
+  call s:add_mappings()
+  let qf = getqflist({'context': 0, 'idx': 0})
+  if get(qf, 'idx') && type(get(qf, 'context')) == type({}) && type(get(qf.context, 'items')) == type([])
+    let diff = get(qf.context.items[qf.idx - 1], 'diff', [])
+    echom string(reverse(range(len(diff))))
+    for i in reverse(range(len(diff)))
+      " exe (i ? 'leftabove' : 'rightbelow') 'vert diffsplit' fnameescape(diff[i].filename)
+      let l:bufnr1 = bufnr()
+      exe 'leftabove' 'vert split' fnameescape(diff[i].filename)
+      let l:bufnr2= bufnr()
+      exec "buf" l:bufnr1
+      diffthis
+      wincmd p
+      exec "buf" l:bufnr2
+      call s:add_mappings()
+    endfor
+  endif
+  if s:diff_workspace
+    call s:diff_workspace_file()
+  endif
+endfunction
+
+function! s:add_mappings() abort
+  nnoremap <buffer>]q :cnext <BAR> :call <sid>diff_current_quickfix_entry()<CR>
+  nnoremap <buffer>[q :cprevious <BAR> :call <sid>diff_current_quickfix_entry()<CR>
+  " Reset quickfix height. Sometimes it messes up after selecting another item
+  11copen
+  wincmd p
+endfunction
+
+command! -nargs=0 DiffWorkspace call s:diff_workspace_file()
+
+function s:diff_workspace_file() abort
+  Gedit %
+  diffthis
+  call s:add_mappings()
+endfunction
 
 " vim-venter
 nnoremap <silent> <Leader>ve :VenterToggle<CR>
@@ -688,6 +756,7 @@ let s:vim_plug = s:scriptexists('plug.vim')
 if s:vim_plug == 1
   call plug#begin()
   Plug 'tpope/vim-fugitive', { 'tag': 'v3.7' }
+  Plug 'rbong/vim-flog', { 'tag': 'v3.0.0' }
   Plug 'tpope/vim-commentary'
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-repeat'
@@ -710,13 +779,14 @@ if s:vim_plug == 1
   Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
   Plug 'preservim/nerdtree'
-  Plug 'majutsushi/tagbar'
+  " Plug 'majutsushi/tagbar'
+  Plug 'zldrobit/tagbar', { 'branch': 'test-diff' }
   Plug 'zldrobit/vim-venter' , { 'branch' : 'develop' }
   call plug#end()
 endif
 
 " vim-lsp
-let g:lsp_debug = 0  " set g:lsp_debug=1 to enable logging
+let g:lsp_debug = 1  " set g:lsp_debug=1 to enable logging
 if g:lsp_debug
   let g:lsp_log_file = expand('~/vim-lsp.log')
   let g:lsp_server_verbose = 1
@@ -751,6 +821,14 @@ let g:lsp_settings = {
 \     'args' : g:lsp_server_verbose ? ['-v'] : []
 \   },
 \}
+" \   'clangd': {
+" \     'workspace_config': {
+" \       'clangd': {
+" \         'allowlist': ['c', 'cpp', 'objc', 'objcpp', 'cuda']
+" \       }
+" \     },
+" \     'args' : g:lsp_server_verbose ? ['-v'] : []
+" \   },
 
 " if executable('pylsp')
 "     " pip install python-lsp-server
