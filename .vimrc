@@ -21,6 +21,10 @@ set sessionoptions-=blank
 set isfname-==
 set noequalalways
 set nowrapscan
+if &term =~ '^screen'
+    " tmux knows the extended mouse mode
+    set ttymouse=xterm2
+endif
 if v:version >= 901
   set wildoptions+=pum
   set jumpoptions=stack
@@ -57,6 +61,7 @@ if has('gui_running')
 else
   let g:lsp_diagnostics_enabled = 0
   let g:lsp_document_highlight_enabled = 1
+  colorscheme industry
 endif
 if has('gui_running')
   if has('win32')
@@ -146,9 +151,9 @@ function s:Vimrc(tab, force_new)
         endif
       endfor
     endif
-    exe ':tabe ' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
+    exe ':tabe ' . (resolve($MYVIMRC))
   else
-    exe ':vs ' . (filereadable('.vimrc') ? '.vimrc' : $MYVIMRC)
+    exe ':vs ' . (resolve($MYVIMRC))
   endif
 endfunction
 command -nargs=+ Vimrc call s:Vimrc(<f-args>)
