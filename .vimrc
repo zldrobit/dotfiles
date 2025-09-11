@@ -29,6 +29,15 @@ if v:version >= 901
   set wildoptions+=pum
   set jumpoptions=stack
 endif
+set clipboard=exclude:cons\|linux " disable accessing X selection in visual mode
+vnoremap <C-S-C> "+y
+nnoremap <C-S-V> "+gP
+nnoremap <C-V> <C-V>
+" paste_cmd in paste.vim?
+vnoremap <C-S-V> "+gP
+inoremap <C-S-V> <C-O>:set paste<CR><C-R>+<C-O>:set paste!<CR>
+cnoremap <C-S-V> <C-R>+
+tnoremap <C-S-V> <C-W>"+
 if has('gui_running')
   set guioptions-=a
   set guioptions-=l
@@ -40,15 +49,6 @@ if has('gui_running')
   colorscheme desert  " signcolumn is not highlighted
   let g:lsp_diagnostics_enabled = 0
   let g:lsp_document_highlight_enabled = 1
-  " set clipboard=unnamed
-  vnoremap <C-S-C> "+y
-  nnoremap <C-S-V> "+gP
-  nnoremap <C-V> <C-V>
-  " paste_cmd in paste.vim?
-  vnoremap <C-S-V> "+gP
-  inoremap <C-S-V> <C-O>:set paste<CR><C-R>+<C-O>:set paste!<CR>
-  cnoremap <C-S-V> <C-R>+
-  tnoremap <C-S-V> <C-W>"+
   nnoremenu 1.1 PopUp.Jump\ Back <C-O>
   nnoremenu 1.2 PopUp.Jump\ Forward <C-I>
   nnoremenu 1.3 PopUp.Close\ Window <C-W>c
