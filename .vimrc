@@ -29,6 +29,9 @@ if v:version >= 901
   set wildoptions+=pum
   set jumpoptions=stack
 endif
+augroup my-quickfix
+  autocmd BufReadPost quickfix nnoremap <buffer> <2-LeftMouse> <CR>
+augroup END
 if has('gui_running')
   set guioptions-=a
   set guioptions-=l
