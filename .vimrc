@@ -21,6 +21,7 @@ set sessionoptions-=blank
 set isfname-==
 set noequalalways
 set nowrapscan
+set mouse=a
 if &term =~ '^screen'
     " tmux knows the extended mouse mode
     set ttymouse=xterm2
@@ -67,7 +68,11 @@ else
   set clipboard=exclude:cons\|linux " disable accessing X selection in visual mode
   " set <F1>=[67;5~
   " vnoremap <F1> "+y
-  vnoremap <ESC>[67;5~ "+y
+  if !empty($TMUX)
+    vnoremap <ESC>[67;5~ y<CR>:call system("tmux load-buffer -w -", @0)<CR>
+  else
+    vnoremap <ESC>[67;5~ "+y
+  endif
   " nnoremap <ESC>[67;5u "+y
   " vnoremap [67;5u "+y
   " nnoremap [67;5u "+y
@@ -268,10 +273,10 @@ cnoreabbrev <expr> vsb (getcmdtype() == ':' && getcmdline() =~ '^vsb$')? 'vert s
 " command -nargs=* -range=% Replace <line1>,<line2>call s:Replace(<f-args>)
 " nnoremap <Leader>re :Replace <C-R><C-W>
 " vnoremap <Leader>re :Replace <C-R><C-W>
-nnoremap <Leader>re :%s/<C-R><C-W>//gI<Left><Left><Left>
-vnoremap <Leader>re :%s/<C-R><C-W>//gI<Left><Left><Left>
-nnoremap <Leader>Re :%s/\<<C-R><C-W>/>\/gI<Left><Left><Left>
-vnoremap <Leader>Re :%s/\<<C-R><C-W>/>\/gI<Left><Left><Left>
+" nnoremap <Leader>re :%s/<C-R><C-W>//gI<Left><Left><Left>
+" vnoremap <Leader>re :%s/<C-R><C-W>//gI<Left><Left><Left>
+" nnoremap <Leader>Re :%s/\<<C-R><C-W>/>\/gI<Left><Left><Left>
+" vnoremap <Leader>Re :%s/\<<C-R><C-W>/>\/gI<Left><Left><Left>
 
 " List chars
 function s:ToggleListChars()
@@ -384,6 +389,8 @@ nnoremap <Leader>on :OnlyBuffer<CR>
 " Difftool and mergetool keymap
 " nnoremap <Leader>lo :diffget<Space>LOCAL<CR>
 " nnoremap <Leader>re :diffget<Space>REMOTE<CR>
+nnoremap <Leader>lo :diffget<Space>//2<CR>
+nnoremap <Leader>re :diffget<Space>//3<CR>
 
 " (Shift) Backspace for last inserted location
 nnoremap <backspace> g;
