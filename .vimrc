@@ -524,6 +524,8 @@ function s:reload_fugitive_index()
   endfor
 endfunction
 
+cabbrev git Git
+
 " fold :Gclog by files
 au FileType git setlocal foldmethod=syntax
 
