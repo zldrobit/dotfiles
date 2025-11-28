@@ -132,6 +132,8 @@ nnoremap <silent> <Leader>pa :set paste!<CR>
 inoremap <C-H> <C-G>u<C-H>
 inoremap <C-U> <C-G>u<C-U>
 
+tnoremap <LeftDrag> <C-W>N
+
 " Trim trailing white spaces
 nnoremap <silent> <Leader>ts ma:let tmp=@/<CR>:%s/\s\+$//ge<CR>`a:let @/=tmp<CR>
 
