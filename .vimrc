@@ -68,9 +68,13 @@ else
   set clipboard=exclude:cons\|linux " disable accessing X selection in visual mode
   " set <F1>=[67;5~
   " vnoremap <F1> "+y
-  if !empty($TMUX)
+  " OSC52
+  let s:tmux_ver = str2float(substitute(system("tmux -V"), '^.*\([0-9]\+\.[0-9]\+\).*$', '\1', ""))
+  if !empty($TMUX) && s:tmux_ver >= 3.2  " which intercepts OSC sequence
     vnoremap <ESC>[67;5~ y<CR>:call system("tmux load-buffer -w -", @0)<CR>
-  else
+  elseif !empty($SSH_CONNECTION)
+    vnoremap <ESC>[67;5~ y<CR>:call writefile(["\e]52;c;" . join(systemlist('base64', @0), '') . "\x07"], "/dev/fd/2", "b")<CR>
+  else  " clipboard feature requried
     vnoremap <ESC>[67;5~ "+y
   endif
   " nnoremap <ESC>[67;5u "+y
@@ -524,7 +528,7 @@ function s:reload_fugitive_index()
   endfor
 endfunction
 
-cabbrev git Git
+cnoreabbrev <expr> git (getcmdtype() == ':' && getcmdline() =~ '^git$')? 'Git' : 'git'
 
 " fold :Gclog by files
 au FileType git setlocal foldmethod=syntax
