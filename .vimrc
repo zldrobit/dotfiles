@@ -669,7 +669,7 @@ let NERDTreeMapQuit = ""
 " let NERDTreeMouseMode = 2
 let g:NERDTreeChDirMode = 2
 " cabbrev ntf NERDTreeFind
-nnoremap <silent> <Leader>nf :NERDTreeFind<CR>
+nnoremap <silent> <Leader>nf :NERDTreeFind<CR><C-W>p
 
 " Tarbar
 "
@@ -707,6 +707,7 @@ augroup my-nerdtree
   "     drop bufname('#')
   "   endif
   " endfunction
+  autocmd DirChanged * if exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != winnr() | silent NERDTreeCWD | wincmd p | endif
 augroup END
 
 " function s:RecreateNERDTree()
