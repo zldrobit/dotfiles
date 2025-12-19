@@ -534,6 +534,9 @@ endfunction
 
 cnoreabbrev <expr> git (getcmdtype() == ':' && getcmdline() =~ '^git$')? 'Git' : 'git'
 
+" fugitive-gitlab
+let g:fugitive_gitlab_domains = ['https://git.utapp.cn']
+
 " fold :Gclog by files
 au FileType git setlocal foldmethod=syntax
 
@@ -818,6 +821,8 @@ if s:vim_plug == 1
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-repeat'
   Plug 'airblade/vim-gitgutter'
+  Plug 'tpope/vim-rhubarb'
+  Plug 'shumphrey/fugitive-gitlab.vim'
 
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
