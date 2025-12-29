@@ -68,15 +68,18 @@ else
   set clipboard=exclude:cons\|linux " disable accessing X selection in visual mode
   " set <F1>=[67;5~
   " vnoremap <F1> "+y
+
   " OSC52
   let s:tmux_ver = str2float(substitute(system("tmux -V"), '^.*\([0-9]\+\.[0-9]\+\).*$', '\1', ""))
+  vmap <silent> <ESC>[67;5~ C
   if !empty($TMUX) && s:tmux_ver >= 3.2  " which intercepts OSC sequence
-    vnoremap <ESC>[67;5~ y<CR>:call system("tmux load-buffer -w -", @0)<CR>
+    vnoremap <silent> C y:call system("tmux load-buffer -w -", @0)<CR>:echo "Yanked using tmux"<CR>
   elseif !empty($SSH_CONNECTION)
-    vnoremap <ESC>[67;5~ y<CR>:call writefile(["\e]52;c;" . join(systemlist('base64', @0), '') . "\x07"], "/dev/fd/2", "b")<CR>
+    vnoremap <silent> C y:call writefile(["\e]52;c;" . join(systemlist('base64', @0), '') . "\x07"], "/dev/fd/2", "b")<CR>:echo "Yanked using OSC52"<CR>
   else  " clipboard feature requried
-    vnoremap <ESC>[67;5~ "+y
+    vnoremap C "+y
   endif
+
   " nnoremap <ESC>[67;5u "+y
   " vnoremap [67;5u "+y
   " nnoremap [67;5u "+y
